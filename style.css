@@ -1336,16 +1336,22 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 }
 
 .about-video {
-  max-width: 880px;
+  max-width: 920px;
   margin: 0 auto clamp(40px, 5vw, 64px);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 .about-video iframe {
-  width: 100%;
-  aspect-ratio: 16/9;
+  position: absolute;
+  top: 0;
+  left: -5.55%;
+  width: 111.11%;
+  height: 100%;
   border: 0;
-  border-radius: 12px;
   display: block;
-  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 
 .about-blocks {
@@ -1705,4 +1711,146 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
     animation-iteration-count: 1 !important;
   }
   .breath-light, .breath-stage::before, .reveal, .stagger > * { opacity: 0.9; transform: scale(1); }
+}
+
+/* ════════════════════════════════════════════════════════
+   MOBILE-ONLY REFINEMENTS  (< 720px)
+   ════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+
+  /* ── 1. Hide centre Map QRs & zoom QR (the iframe map + tap-to-call cover it) ── */
+  .centre-body .qr-figure { display: none; }
+  .centre-body {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .zoom-row .qr-figure,
+  .online-card-wide .zoom-row .qr-figure { display: none; }
+  .online-card-wide .zoom-row { grid-template-columns: 1fr; gap: 18px; }
+
+  /* ── 2. Schedule table → stack each row as a card ── */
+  .course-table-wrap { border-radius: 8px; }
+  table { min-width: 0; width: 100%; }
+  .schedule-table thead { display: none; }
+  .schedule-table tbody { display: block; }
+  .schedule-table tr {
+    display: block;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--light-line);
+  }
+  .schedule-table tr:last-child { border-bottom: 0; }
+  .schedule-table td {
+    display: block;
+    padding: 2px 0;
+    border: 0;
+    font-size: 14.5px;
+  }
+  .schedule-table td:first-child {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 4px;
+  }
+  .schedule-table td:nth-child(2) {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .schedule-table td:nth-child(3) { padding-top: 4px; }
+  .schedule-table .loc-badge {
+    display: inline-flex;
+    font-size: 10px;
+  }
+  .course-note {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  /* ── 3. Path section → compact horizontal icon + text rows ── */
+  .path-steps {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 8px 0 !important;
+  }
+  .path-steps::before { display: none !important; }
+  .path-step {
+    display: grid !important;
+    grid-template-columns: 56px minmax(0, 1fr);
+    text-align: left !important;
+    align-items: center;
+    gap: 16px !important;
+    padding: 12px !important;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--light-line);
+    border-radius: 10px;
+  }
+  .path-step-icon {
+    width: 52px !important;
+    height: 52px !important;
+    margin-bottom: 0 !important;
+    grid-row: span 2;
+  }
+  .path-step-icon svg { width: 22px !important; height: 22px !important; }
+  .path-step h3 {
+    font-size: 17px !important;
+    margin: 0 0 4px !important;
+    text-align: left !important;
+  }
+  .path-step h3 .step-num { font-size: 16px; }
+  .path-step p {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+
+  /* ── 4. Hero photos slightly smaller on phones ── */
+  .hero-photo-main { inset: 2% 4% auto 0; height: 50%; }
+  .hero-photo-small { right: 0; bottom: 6%; width: 56%; height: 38%; }
+
+  /* ── 5. About video — keep proportions, slightly smaller margins ── */
+  .about-video {
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  /* ── 6. Section banners / kickers tighter ── */
+  .section { padding: 56px 0 !important; }
+  .section-shell { width: min(100% - 32px, 1240px); }
+  h2 { font-size: clamp(28px, 8vw, 40px); }
+  .section-intro { font-size: 15px; }
+  .split-heading {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .split-heading > p { padding-top: 4px; font-size: 14.5px; }
+
+  /* ── 7. Centre cards photo smaller, body tighter ── */
+  .centre-card img { height: 200px; }
+  .centre-info { padding: 0; }
+  .centre-info .centre-city { font-size: 24px; }
+
+  /* ── 8. About blocks horizontal Roman + heading row ── */
+  .about-block { gap: 10px; }
+  .about-block-num { width: auto; padding-right: 14px; display: inline-block; }
+
+  /* ── 9. Connect section tightening ── */
+  .footer-card { padding: 22px; }
+  .social-combined { grid-template-columns: 1fr; gap: 10px; }
+  .footer-card ul li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-top: 10px;
+  }
+  .footer-card strong { text-align: left; }
+
+  /* ── 10. App card compact ── */
+  .app-card { padding: 18px; }
+  .play-badge { padding: 10px 14px; }
 }
