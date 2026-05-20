@@ -117,7 +117,7 @@ if (heroVisual && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
 // (Google Sheets → File → Share → Publish to web → CSV → copy link)
 // Expected columns (with a header row): Dates | Course | Location | Note (optional)
 // If empty or fetch fails, the static rows already in the HTML stay as fallback.
-const SHEET_CSV_URL = "";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQutDtPOWq6ED4MA00ipySvCv8SHN4fbnQJ5Q5o2V6NxxWuvKzc7zeby4s1bsIKuXIG4uJptEc90nJm/pub?output=csv";
 
 function parseCSV(text) {
   const rows = [];
