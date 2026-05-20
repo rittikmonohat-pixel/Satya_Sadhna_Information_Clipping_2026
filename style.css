@@ -1347,15 +1347,32 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 
 .about-video {
   max-width: 880px;
-  margin: clamp(40px, 5vw, 64px) auto 0;
+  margin: 0 auto clamp(40px, 5vw, 64px);
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 .about-video iframe {
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
-  border-radius: 12px;
   display: block;
-  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
+}
+/* Mask the YouTube title bar that overlays the top of the player */
+.about-video::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.7) 60%,
+    rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .about-blocks {
