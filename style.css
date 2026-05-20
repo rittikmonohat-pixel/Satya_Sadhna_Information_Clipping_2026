@@ -1347,7 +1347,7 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 
 .about-video {
   max-width: 880px;
-  margin: 0 auto clamp(40px, 5vw, 64px);
+  margin: clamp(40px, 5vw, 64px) auto 0;
 }
 .about-video iframe {
   width: 100%;
