@@ -1348,31 +1348,14 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 .about-video {
   max-width: 880px;
   margin: 0 auto clamp(40px, 5vw, 64px);
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 .about-video iframe {
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
+  border-radius: 12px;
   display: block;
-}
-/* Mask the YouTube title bar that overlays the top of the player */
-.about-video::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: linear-gradient(180deg,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.7) 60%,
-    rgba(0, 0, 0, 0) 100%);
-  pointer-events: none;
-  z-index: 2;
+  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 
 .about-blocks {
@@ -1852,28 +1835,12 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
   .hero-photo-small { right: 0; bottom: 0%; width: 75%; height: 52%; }
   .hero-visual .hero-breath { right: -6%; bottom: -10%; width: 280px; min-height: 280px; }
 
-  /* ── 5. About video — 3:4 portrait on mobile, centred & cropped ── */
+  /* ── 5. About video — keep 16:9 on mobile too ── */
   .about-video {
-    aspect-ratio: 3 / 4;
-    max-width: 100%;
     margin: 0 auto 32px;
-    overflow: hidden;
-    position: relative;
-    border-radius: 8px;
-    box-shadow: 0 12px 32px rgba(30, 58, 95, 0.14);
   }
   .about-video iframe {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
-    width: auto;
-    aspect-ratio: 16 / 9;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    display: block;
+    border-radius: 8px;
   }
 
   /* ── 6. Section banners / kickers tighter ── */
