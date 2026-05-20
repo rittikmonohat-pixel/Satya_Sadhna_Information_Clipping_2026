@@ -372,7 +372,7 @@ blockquote {
   display: block; width: 0; height: 0; margin: 22px 0 0 28px; content: "";
   border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 18px solid var(--white);
 }
-.video-card iframe { width: min(100%, 480px); aspect-ratio: 1; border: 0; border-radius: 8px; }
+.video-card iframe { width: 100%; max-width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 8px; display: block; }
 .video-card > p, figcaption {
   margin: 14px 0 0; color: var(--mid-blue); font-family: var(--serif);
   font-size: 18px; font-style: italic; text-align: center;
