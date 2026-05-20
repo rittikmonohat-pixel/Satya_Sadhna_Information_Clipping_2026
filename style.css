@@ -1730,6 +1730,7 @@ blockquote {
 
   /* ── 1. Hide centre Map QRs & zoom QR (the iframe map + tap-to-call cover it) ── */
   .centre-body .qr-figure { display: none; }
+  .desktop-only { display: none; }
   .centre-body {
     grid-template-columns: 1fr;
     gap: 8px;
