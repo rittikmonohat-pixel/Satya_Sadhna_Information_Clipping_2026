@@ -1346,22 +1346,16 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 }
 
 .about-video {
-  max-width: 920px;
+  max-width: 880px;
   margin: 0 auto clamp(40px, 5vw, 64px);
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  position: relative;
-  border-radius: 12px;
-  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 .about-video iframe {
-  position: absolute;
-  top: 0;
-  left: -5.55%;
-  width: 111.11%;
-  height: 100%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   border: 0;
+  border-radius: 12px;
   display: block;
+  box-shadow: 0 16px 48px rgba(30, 58, 95, 0.14);
 }
 
 .about-blocks {
@@ -1823,11 +1817,28 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
   .hero-photo-small { right: 0; bottom: 0%; width: 75%; height: 52%; }
   .hero-visual .hero-breath { right: -6%; bottom: -10%; width: 280px; min-height: 280px; }
 
-  /* ── 5. About video — keep proportions, slightly smaller margins ── */
+  /* ── 5. About video — 3:4 portrait on mobile, centred & cropped ── */
   .about-video {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 3 / 4;
+    max-width: 100%;
+    margin: 0 auto 32px;
+    overflow: hidden;
+    position: relative;
     border-radius: 8px;
-    margin-bottom: 32px;
+    box-shadow: 0 12px 32px rgba(30, 58, 95, 0.14);
+  }
+  .about-video iframe {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    width: auto;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
   }
 
   /* ── 6. Section banners / kickers tighter ── */
