@@ -1718,9 +1718,9 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
 }
 
 /* ════════════════════════════════════════════════════════
-   MOBILE-ONLY REFINEMENTS  (< 720px)
+   MOBILE-ONLY REFINEMENTS  (< 900px)
    ════════════════════════════════════════════════════════ */
-@media (max-width: 720px) {
+@media (max-width: 900px) {
 
   /* ── 1. Hide centre Map QRs & zoom QR (the iframe map + tap-to-call cover it) ── */
   .centre-body .qr-figure { display: none; }
