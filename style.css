@@ -1774,13 +1774,21 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
     margin-bottom: 3px !important;
   }
   .schedule-table td:nth-child(3) {
-    margin-top: 0 !important;
+    display: block !important;
+    margin-top: 6px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   .schedule-table .loc-badge {
-    display: inline-flex !important;
-    font-size: 10px !important;
-    padding: 2px 8px !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 11px !important;
+    padding: 3px 10px !important;
+    line-height: 1.3 !important;
     white-space: nowrap !important;
+    letter-spacing: 0.05em !important;
+    border-radius: 999px !important;
   }
   .course-note {
     margin-top: 3px !important;
