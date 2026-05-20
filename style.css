@@ -1732,46 +1732,62 @@ tbody tr:hover { background: rgba(232, 240, 245, 0.64); }
   .online-card-wide .zoom-row .qr-figure { display: none; }
   .online-card-wide .zoom-row { grid-template-columns: 1fr; gap: 18px; }
 
-  /* ── 2. Schedule table → stack each row as a card ── */
+  /* ── 2. Schedule table → compact 2-line grid per row ── */
   .course-table-wrap { border-radius: 8px; }
   table { min-width: 0; width: 100%; }
   .schedule-table thead { display: none; }
   .schedule-table tbody { display: block; }
   .schedule-table tr {
-    display: block;
-    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "date  date"
+      "course loc";
+    column-gap: 12px;
+    row-gap: 2px;
+    padding: 8px 14px;
     border-bottom: 1px solid var(--light-line);
+    align-items: center;
   }
   .schedule-table tr:last-child { border-bottom: 0; }
   .schedule-table td {
-    display: block;
-    padding: 2px 0;
+    padding: 0;
     border: 0;
-    font-size: 14.5px;
+    line-height: 1.3;
   }
-  .schedule-table td:first-child {
-    font-weight: 700;
-    color: var(--navy);
-    font-size: 13px;
-    letter-spacing: 0.05em;
+  .schedule-table td:nth-child(1) {
+    grid-area: date;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--amber);
-    margin-bottom: 4px;
+    font-weight: 700;
+    white-space: nowrap;
   }
   .schedule-table td:nth-child(2) {
+    grid-area: course;
+    font-size: 13.5px;
+    color: var(--navy);
     font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 6px;
+    line-height: 1.3;
   }
-  .schedule-table td:nth-child(3) { padding-top: 4px; }
+  .schedule-table td:nth-child(3) {
+    grid-area: loc;
+    text-align: right;
+  }
   .schedule-table .loc-badge {
     display: inline-flex;
     font-size: 10px;
+    padding: 2px 7px;
+    white-space: nowrap;
   }
   .course-note {
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 3px;
+    font-size: 11px;
+    line-height: 1.4;
+    display: block;
   }
+  .course-note::before { margin-right: 2px; }
 
   /* ── 3. Path section → compact horizontal icon + text rows ── */
   .path-steps {
