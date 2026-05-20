@@ -385,12 +385,12 @@ blockquote {
   border-bottom: 1px solid rgba(200, 152, 96, 0.3);
 }
 .pillar-grid article { position: relative; padding: clamp(26px, 4vw, 46px); overflow: hidden; }
-.pillar-grid article::before, .recurring-grid article::before {
+.pillar-grid article::before {
   position: absolute; inset: 0; content: "";
   background: radial-gradient(circle at 20% 0%, rgba(255, 232, 176, 0.22), transparent 42%);
   opacity: 0; transition: opacity 240ms ease;
 }
-.pillar-grid article:hover::before, .recurring-grid article:hover::before { opacity: 1; }
+.pillar-grid article:hover::before { opacity: 1; }
 .pillar-grid article + article { border-left: 1px solid rgba(200, 152, 96, 0.3); }
 .pillar-grid span, .path-list span {
   display: block; color: var(--amber); font-family: var(--serif);
