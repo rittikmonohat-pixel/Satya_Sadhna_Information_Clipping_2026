@@ -457,8 +457,8 @@ async function composeDonationImage(card) {
     im.src = imgEl.src;
   });
 
-  // Canvas layout (2:1.05 portrait-ish, generous padding)
-  const W = 1400, H = 760;
+  // Canvas layout (tight to content on right)
+  const W = 1180, H = 760;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
@@ -505,27 +505,26 @@ async function composeDonationImage(card) {
   let y = qrY + 36;
 
   // Account name (bold)
-  ctx.font = "700 34px Inter, system-ui, sans-serif";
+  ctx.font = "700 38px Inter, system-ui, sans-serif";
   ctx.fillStyle = "#1E3A5F";
   ctx.fillText(accountName, textX, y);
-  y += 52;
+  y += 56;
 
   // Detail lines (bold the part before ':' for A/C, IFSC, MICR etc.)
   lines.forEach((line) => {
     const m = line.match(/^([^:]+:)\s*(.+)$/);
     if (m) {
-      ctx.font = "700 24px Inter, system-ui, sans-serif";
+      ctx.font = "700 27px Inter, system-ui, sans-serif";
       ctx.fillStyle = "#1E3A5F";
-      const labelW = ctx.measureText(m[1] + " ").width;
       ctx.fillText(m[1], textX, y);
-      ctx.font = "400 24px Inter, system-ui, sans-serif";
+      ctx.font = "400 27px Inter, system-ui, sans-serif";
       ctx.fillText(" " + m[2], textX + ctx.measureText(m[1]).width, y);
     } else {
-      ctx.font = "400 24px Inter, system-ui, sans-serif";
+      ctx.font = "400 27px Inter, system-ui, sans-serif";
       ctx.fillStyle = "#1E3A5F";
       ctx.fillText(line, textX, y);
     }
-    y += 38;
+    y += 42;
   });
 
   // Footer
