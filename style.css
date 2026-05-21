@@ -1898,3 +1898,94 @@ blockquote {
   .app-card { padding: 18px; }
   .play-badge { padding: 10px 14px; }
 }
+
+/* ── Apply modal ── */
+.apply-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: none;
+}
+.apply-modal.is-open { display: block; }
+.apply-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(30, 58, 95, 0.55);
+  backdrop-filter: blur(2px);
+}
+.apply-modal-card {
+  position: relative;
+  max-width: 480px;
+  margin: 6vh auto;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 32px 30px 28px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(30, 58, 95, 0.28);
+}
+.apply-modal-card h3 {
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--navy);
+  margin: 0;
+}
+.apply-modal-sub {
+  font-size: 13.5px;
+  color: var(--mid-blue);
+  margin: 6px 0 18px;
+}
+.apply-modal-close {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: 0;
+  font-size: 28px; line-height: 1;
+  cursor: pointer; color: var(--navy);
+  padding: 4px 8px;
+}
+.apply-modal-close:hover { color: var(--amber); }
+.apply-form { display: flex; flex-direction: column; gap: 14px; }
+.apply-form label {
+  display: flex; flex-direction: column; gap: 5px;
+  font-size: 10.5px; font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.apply-form input,
+.apply-form select,
+.apply-form textarea {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--navy);
+  padding: 10px 12px;
+  border: 1px solid var(--light-line);
+  border-radius: 8px;
+  background: var(--white);
+  width: 100%;
+  box-sizing: border-box;
+}
+.apply-form textarea { resize: vertical; min-height: 60px; }
+.apply-form input:focus,
+.apply-form select:focus,
+.apply-form textarea:focus {
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+  border-color: var(--amber);
+}
+.apply-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.apply-note {
+  background: rgba(200, 152, 96, 0.12);
+  border-left: 3px solid var(--amber);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--navy);
+  border-radius: 6px;
+  font-style: italic;
+  line-height: 1.45;
+}
+.apply-submit { margin-top: 6px; align-self: stretch; text-align: center; }
+@media (max-width: 600px) {
+  .apply-modal-card { margin: 3vh 14px; padding: 26px 20px 22px; max-height: 94vh; }
+  .apply-modal-card h3 { font-size: 22px; }
+  .apply-row { grid-template-columns: 1fr; }
+}

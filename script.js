@@ -198,3 +198,93 @@ document.querySelectorAll(".video-trigger").forEach((trigger) => {
     trigger.replaceWith(iframe);
   });
 });
+
+// ── Apply modal ───────────────────────────────────────────────────────────────
+const applyModal = document.getElementById("applyModal");
+const applyCourseSelect = document.getElementById("applyCourse");
+const applyNoteBox = document.getElementById("applyNote");
+const applyForm = document.getElementById("applyForm");
+
+function populateApplyCourses() {
+  if (!applyCourseSelect) return;
+  const rows = document.querySelectorAll(".schedule-list .schedule-row");
+  applyCourseSelect.innerHTML = '<option value="">Select a course…</option>';
+  rows.forEach((row) => {
+    const date = (row.querySelector(".sr-date")?.textContent || "").trim();
+    const courseEl = row.querySelector(".sr-course");
+    let note = "";
+    let courseName = "";
+    if (courseEl) {
+      const noteEl = courseEl.querySelector(".course-note");
+      note = noteEl ? noteEl.textContent.trim() : "";
+      courseName = Array.from(courseEl.childNodes)
+        .filter((n) => !(n.nodeType === 1 && n.classList.contains("course-note")))
+        .map((n) => n.textContent)
+        .join("")
+        .trim();
+    }
+    const loc = (row.querySelector(".sr-loc")?.textContent || "").trim();
+    const opt = document.createElement("option");
+    opt.value = `${date} — ${courseName} — ${loc}`;
+    opt.textContent = `${date} · ${courseName} · ${loc}`;
+    if (note) opt.dataset.note = note;
+    applyCourseSelect.appendChild(opt);
+  });
+}
+
+function openApplyModal(e) {
+  if (e) e.preventDefault();
+  if (!applyModal) return;
+  populateApplyCourses();
+  if (applyNoteBox) { applyNoteBox.hidden = true; applyNoteBox.textContent = ""; }
+  applyModal.classList.add("is-open");
+  applyModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeApplyModal() {
+  if (!applyModal) return;
+  applyModal.classList.remove("is-open");
+  applyModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+document.querySelectorAll(".apply-trigger").forEach((el) =>
+  el.addEventListener("click", openApplyModal),
+);
+applyModal?.querySelectorAll("[data-close]").forEach((el) =>
+  el.addEventListener("click", closeApplyModal),
+);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && applyModal?.classList.contains("is-open")) closeApplyModal();
+});
+
+applyCourseSelect?.addEventListener("change", () => {
+  const opt = applyCourseSelect.options[applyCourseSelect.selectedIndex];
+  const note = opt?.dataset.note || "";
+  if (!applyNoteBox) return;
+  if (note) {
+    applyNoteBox.textContent = "✦ " + note;
+    applyNoteBox.hidden = false;
+  } else {
+    applyNoteBox.hidden = true;
+    applyNoteBox.textContent = "";
+  }
+});
+
+applyForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!applyForm.reportValidity()) return;
+  const fd = new FormData(applyForm);
+  const msg =
+    `Hello, I'd like to apply for a Satya Sadhna course.\n\n` +
+    `Name: ${fd.get("name")}\n` +
+    `Age: ${fd.get("age")}\n` +
+    `Gender: ${fd.get("gender")}\n` +
+    `Address: ${fd.get("address")}\n` +
+    `Course: ${fd.get("course")}\n\n` +
+    `Please share the next steps. Thank you.`;
+  const url = `https://wa.me/919836488880?text=${encodeURIComponent(msg)}`;
+  window.open(url, "_blank", "noopener");
+  closeApplyModal();
+});
