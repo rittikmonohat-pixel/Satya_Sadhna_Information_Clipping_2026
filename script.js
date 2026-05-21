@@ -481,8 +481,10 @@ document.querySelectorAll(".share-donation").forEach((btn) => {
   const card = btn.closest(".donation-card");
   const centreShort = (card?.dataset.centre || "").split(" ")[0]; // "Bikaner" / "Kolkata"
   if (DONATION_SHARE_MODE === "download") {
-    btn.innerHTML = `${DOWNLOAD_ICON_SVG} Download ${centreShort} QR`;
+    btn.innerHTML = DOWNLOAD_ICON_SVG;
+    btn.title = `Download ${centreShort} QR`;
     btn.setAttribute("aria-label", `Download ${centreShort} UPI QR code`);
+    btn.classList.add("download-icon-only");
     btn.addEventListener("click", () => downloadDonationQR(card));
   } else {
     btn.addEventListener("click", () => shareDonationCard(card));
