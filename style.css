@@ -2023,25 +2023,23 @@ blockquote {
   .donation-card .share-donation { align-self: stretch; justify-content: center; }
 }
 
-/* ── Icon-only download button (web) — overlaid on QR corner ── */
+/* ── Icon-only download button (web) — top-right of card ── */
 .donation-card { position: relative; }
-.donation-card-body figure { position: relative; }
 .donation-card .download-icon-only {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 28px;
-  height: 28px;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border-radius: 999px;
   border: 1px solid var(--light-line);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--white);
   color: var(--navy);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(30, 58, 95, 0.12);
   transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
   margin: 0;
   align-self: auto;

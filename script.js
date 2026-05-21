@@ -580,9 +580,6 @@ document.querySelectorAll(".share-donation").forEach((btn) => {
     btn.title = `Download ${centreShort} QR`;
     btn.setAttribute("aria-label", `Download ${centreShort} UPI QR code`);
     btn.classList.add("download-icon-only");
-    // Move into the QR figure so it overlays the QR corner
-    const figure = card?.querySelector(".donation-card-body figure");
-    if (figure) figure.appendChild(btn);
     btn.addEventListener("click", () => downloadDonationQR(card));
   } else {
     btn.addEventListener("click", () => shareDonationCard(card));
