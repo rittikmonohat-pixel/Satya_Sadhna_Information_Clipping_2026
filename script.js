@@ -340,3 +340,43 @@ applyForm?.addEventListener("submit", (e) => {
   window.open(url, "_blank", "noopener");
   closeApplyModal();
 });
+
+// ── Share schedule on WhatsApp ────────────────────────────────────────────────
+function buildScheduleShareText() {
+  const rows = document.querySelectorAll(".schedule-list .schedule-row");
+  if (!rows.length) return "";
+  const lines = ["*Satya Sadhna — Course Schedule*", ""];
+  rows.forEach((row) => {
+    const date = (row.querySelector(".sr-date")?.textContent || "").trim();
+    const courseEl = row.querySelector(".sr-course");
+    let course = "";
+    let note = "";
+    if (courseEl) {
+      const noteEl = courseEl.querySelector(".course-note");
+      note = noteEl ? noteEl.textContent.trim() : "";
+      course = Array.from(courseEl.childNodes)
+        .filter((n) => !(n.nodeType === 1 && n.classList.contains("course-note")))
+        .map((n) => n.textContent)
+        .join("")
+        .trim();
+    }
+    const loc = (row.querySelector(".sr-loc")?.textContent || "").trim();
+    lines.push(`• *${date}*`);
+    lines.push(`  ${course}`);
+    lines.push(`  ${loc}`);
+    if (note) lines.push(`  _${note}_`);
+    lines.push("");
+  });
+  lines.push("Apply & full details:");
+  lines.push("https://satya-sadhna-information-clipping.vercel.app");
+  return lines.join("\n");
+}
+
+document.querySelectorAll(".share-schedule").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const text = buildScheduleShareText();
+    if (!text) return;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank", "noopener");
+  });
+});

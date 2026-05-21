@@ -1996,3 +1996,22 @@ blockquote {
   .apply-modal-card h3 { font-size: 22px; }
   .apply-row { grid-template-columns: 1fr; }
 }
+
+/* ── Share schedule button ── */
+.course-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.button-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--navy);
+  background: transparent;
+  border: 1px solid var(--light-line);
+  border-radius: 999px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.button-ghost:hover { background: rgba(37, 211, 102, 0.08); border-color: #25D366; color: #128C7E; }
+.share-wa-icon { width: 18px; height: 18px; color: #25D366; }
+.button-ghost:hover .share-wa-icon { color: #128C7E; }
