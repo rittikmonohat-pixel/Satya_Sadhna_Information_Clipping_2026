@@ -2096,16 +2096,44 @@ blockquote {
   .about-actions .share-about { width: 100%; justify-content: center; }
 }
 
-/* ── Social/Follow share button ── */
+/* ── Social/Follow share button (icon-only, top-right) ── */
+.follow-stack .footer-card { position: relative; }
 .follow-share-action {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-start;
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  margin: 0;
 }
 .follow-share-action .share-social {
-  padding: 10px 18px;
-  font-size: 12px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 999px;
+  border: 0;
+  background: #ffffff;
+  color: #128C7E;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  font-size: 0;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+}
+.follow-share-action .share-social:hover {
+  background: #25D366;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(37, 211, 102, 0.42);
+}
+.follow-share-action .share-social .share-wa-icon {
+  width: 20px;
+  height: 20px;
+  color: inherit;
 }
 @media (max-width: 600px) {
-  .follow-share-action .share-social { width: 100%; justify-content: center; }
+  .follow-share-action { top: 16px; right: 16px; }
 }
