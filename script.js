@@ -732,22 +732,13 @@ function buildAboutShareText() {
     out.push("");
   }
 
-  document.querySelectorAll(".about-block").forEach((block) => {
-    const num = block.querySelector(".about-block-num")?.textContent.trim() || "";
-    const h3 = block.querySelector("h3")?.textContent.trim() || "";
-    const p = block.querySelector("p")?.textContent.trim() || "";
-    if (h3) out.push(`*${num ? num + " " : ""}${h3}*`);
-    if (p) out.push(p);
-    out.push("");
-  });
-
   // YouTube link (rebuild from the iframe's src)
   const iframe = document.querySelector(".about-video iframe");
   if (iframe) {
     const src = iframe.getAttribute("src") || "";
     const m = src.match(/embed\/([^?]+)/);
     if (m) {
-      out.push("🎥 A few words from the teacher:");
+      out.push("A few words from the Acharya Shri Jin Chandra Suriji:");
       out.push(`https://youtu.be/${m[1]}`);
       out.push("");
     }
