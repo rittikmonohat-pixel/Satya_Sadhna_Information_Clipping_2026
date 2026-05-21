@@ -599,22 +599,9 @@ document.querySelectorAll(".share-donation").forEach((btn) => {
 
 // ── Share online (Zoom) schedule ──────────────────────────────────────────────
 function buildOnlineShareText() {
-  const articles = document.querySelectorAll(".recurring-grid > article");
   const out = ["*Satya Sadhna — Online Sessions*", ""];
-  articles.forEach((art) => {
-    const h3 = art.querySelector("h3")?.textContent.trim();
-    if (!h3 || h3.toLowerCase().includes("how to join")) return;
-    out.push(`*${h3}*`);
-    art.querySelectorAll("ul li").forEach((li) => {
-      const strong = li.querySelector(".session-info strong")?.textContent.trim() || "";
-      const span = li.querySelector(".session-info span")?.textContent.trim() || "";
-      const bullet = span ? `• *${strong}* — ${span}` : `• *${strong}*`;
-      out.push(bullet);
-    });
-    out.push("");
-  });
 
-  // Zoom details
+  // Zoom details FIRST
   const zoomBox = document.querySelector(".zoom-box");
   if (zoomBox) {
     out.push("*Zoom Details*");
@@ -633,8 +620,25 @@ function buildOnlineShareText() {
     out.push("");
     out.push("_Please join 5 minutes before scheduled time._");
     out.push("");
+  }
 
-    // Contacts
+  // Schedule (timings) after Zoom details
+  const articles = document.querySelectorAll(".recurring-grid > article");
+  articles.forEach((art) => {
+    const h3 = art.querySelector("h3")?.textContent.trim();
+    if (!h3 || h3.toLowerCase().includes("how to join")) return;
+    out.push(`*${h3}*`);
+    art.querySelectorAll("ul li").forEach((li) => {
+      const strong = li.querySelector(".session-info strong")?.textContent.trim() || "";
+      const span = li.querySelector(".session-info span")?.textContent.trim() || "";
+      const bullet = span ? `• *${strong}* — ${span}` : `• *${strong}*`;
+      out.push(bullet);
+    });
+    out.push("");
+  });
+
+  // Contacts last
+  if (zoomBox) {
     const contacts = zoomBox.querySelectorAll(".zoom-contact-item");
     if (contacts.length) {
       out.push("*Need help?*");

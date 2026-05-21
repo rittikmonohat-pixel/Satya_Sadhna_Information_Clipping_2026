@@ -2060,17 +2060,12 @@ blockquote {
 }
 
 /* ── Share online schedule button placement ── */
-.zoom-box .share-online {
-  display: inline-flex;
-  margin-left: 10px;
-  vertical-align: middle;
-  padding: 10px 16px;
+.zoom-contact .share-online {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 10px 18px;
   font-size: 12px;
 }
 @media (max-width: 600px) {
-  .zoom-box .share-online {
-    margin-left: 0;
-    margin-top: 10px;
-    display: inline-flex;
-  }
+  .zoom-contact .share-online { align-self: stretch; justify-content: center; }
 }
