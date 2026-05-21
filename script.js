@@ -413,13 +413,44 @@ function buildDonationShareText(card) {
   return out.join("\n");
 }
 
+async function shareDonationCard(card) {
+  const text = buildDonationShareText(card);
+  if (!text) return;
+  const centre = (card.dataset.centre || "donation").replace(/\s+/g, "-");
+  const imgEl = card.querySelector(".donation-card-body img");
+
+  // Mobile path: Web Share API with QR file attached -> WhatsApp gets image + text
+  if (imgEl && navigator.canShare) {
+    try {
+      const res = await fetch(imgEl.src, { mode: "cors" });
+      if (res.ok) {
+        const blob = await res.blob();
+        const file = new File([blob], `${centre}-UPI-QR.jpg`, {
+          type: blob.type || "image/jpeg",
+        });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            text,
+            title: `Satya Sadhna — ${card.dataset.centre || ""}`,
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return; // user cancelled
+      console.warn("File share unavailable, falling back to text:", e);
+    }
+  }
+
+  // Desktop / unsupported fallback: open QR in new tab + WhatsApp text
+  if (imgEl) window.open(imgEl.src, "_blank", "noopener");
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+}
+
 document.querySelectorAll(".share-donation").forEach((btn) => {
   btn.addEventListener("click", () => {
     const card = btn.closest(".donation-card");
-    if (!card) return;
-    const text = buildDonationShareText(card);
-    if (!text) return;
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank", "noopener");
+    if (card) shareDonationCard(card);
   });
 });
