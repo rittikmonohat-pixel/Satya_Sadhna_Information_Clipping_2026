@@ -531,10 +531,7 @@ async function composeDonationImage(card) {
   // Footer
   ctx.font = "500 18px Inter, system-ui, sans-serif";
   ctx.fillStyle = "#3D6488";
-  ctx.fillText("Scan with any UPI app to donate  ·  80-G tax exempt", 72, H - 70);
-  ctx.font = "600 17px Inter, system-ui, sans-serif";
-  ctx.fillStyle = "#1E3A5F";
-  ctx.fillText("satya-sadhna-information-clipping.vercel.app", 72, H - 42);
+  ctx.fillText("Scan with any UPI app to donate  ·  80-G tax exempt", 72, H - 60);
 
   return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
 }
