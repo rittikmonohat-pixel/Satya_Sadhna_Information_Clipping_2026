@@ -2081,3 +2081,17 @@ blockquote {
 @media (max-width: 600px) {
   .centre-info .share-centre { align-self: stretch; justify-content: center; }
 }
+
+/* ── About section share button ── */
+.about-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+.about-actions .share-about {
+  padding: 11px 22px;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .about-actions .share-about { width: 100%; justify-content: center; }
+}

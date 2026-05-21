@@ -743,3 +743,46 @@ document.querySelectorAll(".share-centre").forEach((btn) => {
     if (card) shareCentre(card);
   });
 });
+
+// ── Share About (with video link) ─────────────────────────────────────────────
+function buildAboutShareText() {
+  const out = ["*About Satya Sadhna*", ""];
+
+  const lead = document.querySelector(".about-lead")?.textContent.trim();
+  if (lead) {
+    out.push(lead);
+    out.push("");
+  }
+
+  document.querySelectorAll(".about-block").forEach((block) => {
+    const num = block.querySelector(".about-block-num")?.textContent.trim() || "";
+    const h3 = block.querySelector("h3")?.textContent.trim() || "";
+    const p = block.querySelector("p")?.textContent.trim() || "";
+    if (h3) out.push(`*${num ? num + " " : ""}${h3}*`);
+    if (p) out.push(p);
+    out.push("");
+  });
+
+  // YouTube link (rebuild from the iframe's src)
+  const iframe = document.querySelector(".about-video iframe");
+  if (iframe) {
+    const src = iframe.getAttribute("src") || "";
+    const m = src.match(/embed\/([^?]+)/);
+    if (m) {
+      out.push("🎥 A few words from the teacher:");
+      out.push(`https://youtu.be/${m[1]}`);
+      out.push("");
+    }
+  }
+
+  out.push("More info:");
+  out.push("https://satya-sadhna-information-clipping.vercel.app#practice");
+  return out.join("\n");
+}
+
+document.querySelectorAll(".share-about").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const text = buildAboutShareText();
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
+});
