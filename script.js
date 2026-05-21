@@ -380,3 +380,46 @@ document.querySelectorAll(".share-schedule").forEach((btn) => {
     window.open(url, "_blank", "noopener");
   });
 });
+
+// ── Share donation details on WhatsApp ────────────────────────────────────────
+function buildDonationShareText(card) {
+  const centre = card.dataset.centre || (card.querySelector("h4")?.textContent || "").trim();
+  const p = card.querySelector(".donation-card-body p");
+  if (!p) return "";
+  const accountName = (p.querySelector("strong")?.textContent || "").trim();
+  // Pull the text after the strong as the address/account block, splitting on <br>
+  const html = p.innerHTML;
+  const afterStrong = html.split(/<\/strong>/i)[1] || "";
+  const lines = afterStrong
+    .split(/<br\s*\/?\s*>/i)
+    .map((s) => s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  const out = [
+    `*Satya Sadhna — ${centre}*`,
+    "Donations support the running of the centre and the spread of the practice.",
+    "",
+    `*Account Name:* ${accountName}`,
+  ];
+  lines.forEach((l) => {
+    const m = l.match(/^([^:]+):\s*(.+)$/);
+    if (m) out.push(`*${m[1].trim()}:* ${m[2].trim()}`);
+    else out.push(l);
+  });
+  out.push("");
+  out.push("_All donations qualify for 80-G tax deduction._");
+  out.push("");
+  out.push("Full details & UPI QR:");
+  out.push("https://satya-sadhna-information-clipping.vercel.app#support");
+  return out.join("\n");
+}
+
+document.querySelectorAll(".share-donation").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const card = btn.closest(".donation-card");
+    if (!card) return;
+    const text = buildDonationShareText(card);
+    if (!text) return;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank", "noopener");
+  });
+});

@@ -2015,3 +2015,10 @@ blockquote {
 .button-ghost:hover { background: rgba(37, 211, 102, 0.08); border-color: #25D366; color: #128C7E; }
 .share-wa-icon { width: 18px; height: 18px; color: #25D366; }
 .button-ghost:hover .share-wa-icon { color: #128C7E; }
+
+/* ── Donation card share button placement ── */
+.donation-card { display: flex; flex-direction: column; }
+.donation-card .share-donation { margin-top: 18px; align-self: flex-start; }
+@media (max-width: 600px) {
+  .donation-card .share-donation { align-self: stretch; justify-content: center; }
+}
