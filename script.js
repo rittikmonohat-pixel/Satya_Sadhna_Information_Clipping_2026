@@ -596,3 +596,90 @@ document.querySelectorAll(".share-donation").forEach((btn) => {
     btn.addEventListener("click", () => shareDonationCard(card));
   }
 });
+
+// ── Share online (Zoom) schedule ──────────────────────────────────────────────
+function buildOnlineShareText() {
+  const articles = document.querySelectorAll(".recurring-grid > article");
+  const out = ["*Satya Sadhna — Online Sessions*", ""];
+  articles.forEach((art) => {
+    const h3 = art.querySelector("h3")?.textContent.trim();
+    if (!h3 || h3.toLowerCase().includes("how to join")) return;
+    out.push(`*${h3}*`);
+    art.querySelectorAll("ul li").forEach((li) => {
+      const strong = li.querySelector(".session-info strong")?.textContent.trim() || "";
+      const span = li.querySelector(".session-info span")?.textContent.trim() || "";
+      const bullet = span ? `• *${strong}* — ${span}` : `• *${strong}*`;
+      out.push(bullet);
+    });
+    out.push("");
+  });
+
+  // Zoom details
+  const zoomBox = document.querySelector(".zoom-box");
+  if (zoomBox) {
+    out.push("*Zoom Details*");
+    const cred = zoomBox.querySelector(".zoom-box-credentials");
+    if (cred) {
+      cred.innerHTML.split(/<br\s*\/?\s*>/i).forEach((seg) => {
+        const text = seg.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+        if (!text) return;
+        const m = text.match(/^([^:]+):\s*(.+)$/);
+        if (m) out.push(`${m[1].trim()}: *${m[2].trim()}*`);
+        else out.push(text);
+      });
+    }
+    const joinLink = zoomBox.querySelector(".zoom-cta")?.href;
+    if (joinLink) out.push(`Join link: ${joinLink}`);
+    out.push("");
+    out.push("_Please join 5 minutes before scheduled time._");
+    out.push("");
+
+    // Contacts
+    const contacts = zoomBox.querySelectorAll(".zoom-contact-item");
+    if (contacts.length) {
+      out.push("*Need help?*");
+      contacts.forEach((c) => {
+        const label = c.querySelector(".zoom-contact-text span")?.textContent.trim();
+        const value = c.querySelector(".zoom-contact-text a")?.textContent.trim();
+        if (label && value) out.push(`${label}: ${value}`);
+      });
+      out.push("");
+    }
+  }
+
+  out.push("More info:");
+  out.push("https://satya-sadhna-information-clipping.vercel.app");
+  return out.join("\n");
+}
+
+async function shareOnlineSchedule() {
+  const text = buildOnlineShareText();
+  const qrEl = document.querySelector(".online-card-wide .qr-figure img");
+
+  // Mobile: try native share with QR file attached
+  if (isMobileDevice() && qrEl && navigator.canShare) {
+    try {
+      const res = await fetch(qrEl.src, { mode: "cors" });
+      if (res.ok) {
+        const blob = await res.blob();
+        const file = new File([blob], "Satya-Sadhna-Zoom-QR.png", {
+          type: blob.type || "image/png",
+        });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text, title: "Satya Sadhna — Online Sessions" });
+          return;
+        }
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+      console.warn("Online share failed, falling back to text:", e);
+    }
+  }
+
+  // Web / fallback: wa.me text share
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+}
+
+document.querySelectorAll(".share-online").forEach((btn) => {
+  btn.addEventListener("click", shareOnlineSchedule);
+});

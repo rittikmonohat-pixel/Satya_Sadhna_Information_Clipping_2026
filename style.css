@@ -2058,3 +2058,19 @@ blockquote {
   height: 18px;
   color: inherit;
 }
+
+/* ── Share online schedule button placement ── */
+.zoom-box .share-online {
+  display: inline-flex;
+  margin-left: 10px;
+  vertical-align: middle;
+  padding: 10px 16px;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .zoom-box .share-online {
+    margin-left: 0;
+    margin-top: 10px;
+    display: inline-flex;
+  }
+}
