@@ -137,6 +137,41 @@ function parseCSV(text) {
   return rows.filter((r) => r.some((c) => c && c.trim()));
 }
 
+const MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+function parseCourseStart(dateStr) {
+  if (!dateStr) return null;
+  const parts = String(dateStr).split(/\s*[–—-]\s*/);
+  const left = (parts[0] || "").trim();
+  const right = (parts[1] || "").trim();
+  const lt = left.split(/\s+/);
+  let day, monStr, year;
+  if (lt.length >= 3) { [day, monStr, year] = lt; }
+  else if (lt.length === 2) {
+    [day, monStr] = lt;
+    const rt = right.split(/\s+/);
+    year = rt[rt.length - 1];
+  } else return null;
+  const monIdx = MONTHS[(monStr || "").slice(0, 3).toLowerCase()];
+  const d = parseInt(day, 10), y = parseInt(year, 10);
+  if (isNaN(d) || monIdx === undefined || isNaN(y)) return null;
+  return new Date(y, monIdx, d);
+}
+function isCoursePast(dateStr) {
+  const start = parseCourseStart(dateStr);
+  if (!start) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return start < today;
+}
+
+function filterPastStaticRows() {
+  document.querySelectorAll(".schedule-list .schedule-row").forEach((row) => {
+    const d = (row.querySelector(".sr-date")?.textContent || "").trim();
+    if (isCoursePast(d)) row.remove();
+  });
+}
+filterPastStaticRows();
+
 function locClass(loc) {
   const l = (loc || "").toLowerCase();
   if (l.includes("kheyada") || l.includes("kolkata")) return "loc-kheyada";
@@ -161,7 +196,7 @@ async function loadSchedule() {
     const csv = await res.text();
     const rows = parseCSV(csv);
     if (rows.length < 2) return;
-    const dataRows = rows.slice(1);
+    const dataRows = rows.slice(1).filter(([date]) => !isCoursePast(date));
 
     list.querySelectorAll(".schedule-row").forEach((r) => r.remove());
 

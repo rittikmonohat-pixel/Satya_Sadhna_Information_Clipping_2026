@@ -1930,7 +1930,14 @@ blockquote {
 .apply-modal-sub {
   font-size: 13.5px;
   color: var(--mid-blue);
-  margin: 6px 0 18px;
+  margin: 6px 0 8px;
+}
+.apply-modal-hint {
+  font-size: 11.5px;
+  color: var(--amber);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 18px;
 }
 .apply-modal-close {
   position: absolute; top: 10px; right: 14px;
