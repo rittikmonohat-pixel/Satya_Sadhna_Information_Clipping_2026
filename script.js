@@ -755,3 +755,27 @@ document.querySelectorAll(".share-about").forEach((btn) => {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
   });
 });
+
+// ── Share social links ────────────────────────────────────────────────────────
+function buildSocialShareText() {
+  const out = ["*Satya Sadhna — Connect With Us*", ""];
+  document.querySelectorAll(".social-combined .social-row").forEach((row) => {
+    const label = (row.querySelector(".social-row-label strong")?.textContent || "").trim();
+    const href = row.getAttribute("href") || "";
+    if (label && href) {
+      out.push(`*${label}:*`);
+      out.push(href);
+      out.push("");
+    }
+  });
+  out.push("More info:");
+  out.push("https://satya-sadhna-information-clipping.vercel.app#connect");
+  return out.join("\n");
+}
+
+document.querySelectorAll(".share-social").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const text = buildSocialShareText();
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
+});
