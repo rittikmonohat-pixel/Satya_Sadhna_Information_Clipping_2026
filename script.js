@@ -333,6 +333,7 @@ applyForm?.addEventListener("submit", (e) => {
     `Name: *${fd.get("name")}*\n` +
     `Age: *${fd.get("age")}*\n` +
     `Gender: *${fd.get("gender")}*\n` +
+    `Mobile: *${fd.get("mobile")}*\n` +
     `Address: *${fd.get("address")}*\n` +
     `Course: *${fd.get("course")}*\n\n` +
     `Please share the next steps. Thank you.`;
