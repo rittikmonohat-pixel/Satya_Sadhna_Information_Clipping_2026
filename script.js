@@ -138,7 +138,9 @@ function parseCSV(text) {
 }
 
 const MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
-function parseCourseStart(dateStr) {
+// Returns the UTC millisecond cutoff at which a course should disappear:
+// 17:00 IST (= 11:30 UTC) on the course start date.
+function courseCutoffUTC(dateStr) {
   if (!dateStr) return null;
   const parts = String(dateStr).split(/\s*[–—-]\s*/);
   const left = (parts[0] || "").trim();
@@ -154,14 +156,12 @@ function parseCourseStart(dateStr) {
   const monIdx = MONTHS[(monStr || "").slice(0, 3).toLowerCase()];
   const d = parseInt(day, 10), y = parseInt(year, 10);
   if (isNaN(d) || monIdx === undefined || isNaN(y)) return null;
-  return new Date(y, monIdx, d);
+  return Date.UTC(y, monIdx, d, 11, 30); // 17:00 IST
 }
 function isCoursePast(dateStr) {
-  const start = parseCourseStart(dateStr);
-  if (!start) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return start < today;
+  const cutoff = courseCutoffUTC(dateStr);
+  if (cutoff == null) return false;
+  return Date.now() > cutoff;
 }
 
 function filterPastStaticRows() {
@@ -241,12 +241,11 @@ const applyNoteBox = document.getElementById("applyNote");
 const applyForm = document.getElementById("applyForm");
 
 function isWithinApplyWindow(dateStr) {
-  const start = parseCourseStart(dateStr);
-  if (!start) return false;
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const max = new Date(today);
-  max.setDate(max.getDate() + 56); // 8 weeks
-  return start >= today && start <= max;
+  const cutoff = courseCutoffUTC(dateStr);
+  if (cutoff == null) return false;
+  const now = Date.now();
+  const eightWeeks = 56 * 24 * 3600 * 1000;
+  return cutoff > now && cutoff <= now + eightWeeks;
 }
 
 function populateApplyCourses() {
