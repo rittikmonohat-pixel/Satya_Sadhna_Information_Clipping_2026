@@ -413,44 +413,67 @@ function buildDonationShareText(card) {
   return out.join("\n");
 }
 
+function supportsFileShare() {
+  if (typeof navigator === "undefined" || !navigator.canShare) return false;
+  try {
+    const probe = new File(["x"], "probe.txt", { type: "text/plain" });
+    return navigator.canShare({ files: [probe] });
+  } catch (e) { return false; }
+}
+const DONATION_SHARE_MODE = supportsFileShare() ? "share" : "download";
+
+const DOWNLOAD_ICON_SVG =
+  '<svg class="share-wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+  '<path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1Zm-7 15a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"/>' +
+  "</svg>";
+
 async function shareDonationCard(card) {
   const text = buildDonationShareText(card);
   if (!text) return;
   const centre = (card.dataset.centre || "donation").replace(/\s+/g, "-");
   const imgEl = card.querySelector(".donation-card-body img");
 
-  // Mobile path: Web Share API with QR file attached -> WhatsApp gets image + text
-  if (imgEl && navigator.canShare) {
-    try {
-      const res = await fetch(imgEl.src, { mode: "cors" });
-      if (res.ok) {
-        const blob = await res.blob();
-        const file = new File([blob], `${centre}-UPI-QR.jpg`, {
-          type: blob.type || "image/jpeg",
-        });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            text,
-            title: `Satya Sadhna — ${card.dataset.centre || ""}`,
-          });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e && e.name === "AbortError") return; // user cancelled
-      console.warn("File share unavailable, falling back to text:", e);
+  try {
+    const res = await fetch(imgEl.src, { mode: "cors" });
+    if (!res.ok) throw new Error("fetch failed");
+    const blob = await res.blob();
+    const file = new File([blob], `${centre}-UPI-QR.jpg`, {
+      type: blob.type || "image/jpeg",
+    });
+    if (navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        text,
+        title: `Satya Sadhna — ${card.dataset.centre || ""}`,
+      });
+      return;
     }
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    console.warn("Share failed:", e);
   }
+}
 
-  // Desktop / unsupported fallback: open QR in new tab + WhatsApp text
-  if (imgEl) window.open(imgEl.src, "_blank", "noopener");
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+function downloadDonationQR(card) {
+  const imgEl = card.querySelector(".donation-card-body img");
+  if (!imgEl) return;
+  const centre = (card.dataset.centre || "donation").replace(/\s+/g, "-");
+  const a = document.createElement("a");
+  a.href = imgEl.src;
+  a.download = `${centre}-UPI-QR.jpg`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 document.querySelectorAll(".share-donation").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const card = btn.closest(".donation-card");
-    if (card) shareDonationCard(card);
-  });
+  const card = btn.closest(".donation-card");
+  const centreShort = (card?.dataset.centre || "").split(" ")[0]; // "Bikaner" / "Kolkata"
+  if (DONATION_SHARE_MODE === "download") {
+    btn.innerHTML = `${DOWNLOAD_ICON_SVG} Download ${centreShort} QR`;
+    btn.setAttribute("aria-label", `Download ${centreShort} UPI QR code`);
+    btn.addEventListener("click", () => downloadDonationQR(card));
+  } else {
+    btn.addEventListener("click", () => shareDonationCard(card));
+  }
 });
