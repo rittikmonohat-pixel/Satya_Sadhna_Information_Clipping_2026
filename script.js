@@ -240,12 +240,24 @@ const applyCourseSelect = document.getElementById("applyCourse");
 const applyNoteBox = document.getElementById("applyNote");
 const applyForm = document.getElementById("applyForm");
 
+function isWithinApplyWindow(dateStr) {
+  const start = parseCourseStart(dateStr);
+  if (!start) return false;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const max = new Date(today);
+  max.setDate(max.getDate() + 56); // 8 weeks
+  return start >= today && start <= max;
+}
+
 function populateApplyCourses() {
   if (!applyCourseSelect) return;
   const rows = document.querySelectorAll(".schedule-list .schedule-row");
   applyCourseSelect.innerHTML = '<option value="">Select a course…</option>';
+  let count = 0;
   rows.forEach((row) => {
     const date = (row.querySelector(".sr-date")?.textContent || "").trim();
+    if (!isWithinApplyWindow(date)) return;
+    count++;
     const courseEl = row.querySelector(".sr-course");
     let note = "";
     let courseName = "";
@@ -265,6 +277,12 @@ function populateApplyCourses() {
     if (note) opt.dataset.note = note;
     applyCourseSelect.appendChild(opt);
   });
+  if (count === 0) {
+    applyCourseSelect.innerHTML = '<option value="">No courses currently open for application</option>';
+    applyCourseSelect.disabled = true;
+  } else {
+    applyCourseSelect.disabled = false;
+  }
 }
 
 function openApplyModal(e) {
