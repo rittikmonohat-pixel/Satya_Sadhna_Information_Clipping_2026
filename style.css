@@ -2027,10 +2027,10 @@ blockquote {
 .donation-card { position: relative; }
 .donation-card .download-icon-only {
   position: absolute;
-  top: 14px;
+  bottom: 16px;
   right: 16px;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-radius: 999px;
   border: 1px solid var(--light-line);
@@ -2054,8 +2054,8 @@ blockquote {
   transform: translateY(-1px);
 }
 .donation-card .download-icon-only .share-wa-icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   color: inherit;
 }
 
