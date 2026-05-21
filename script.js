@@ -331,11 +331,11 @@ applyForm?.addEventListener("submit", (e) => {
   const fd = new FormData(applyForm);
   const msg =
     `Hello, I'd like to apply for a Satya Sadhna course.\n\n` +
-    `Name: ${fd.get("name")}\n` +
-    `Age: ${fd.get("age")}\n` +
-    `Gender: ${fd.get("gender")}\n` +
-    `Address: ${fd.get("address")}\n` +
-    `Course: ${fd.get("course")}\n\n` +
+    `Name: *${fd.get("name")}*\n` +
+    `Age: *${fd.get("age")}*\n` +
+    `Gender: *${fd.get("gender")}*\n` +
+    `Address: *${fd.get("address")}*\n` +
+    `Course: *${fd.get("course")}*\n\n` +
     `Please share the next steps. Thank you.`;
   const url = `https://wa.me/919836488880?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank", "noopener");
