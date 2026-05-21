@@ -732,34 +732,8 @@ function buildCentreShareText(card) {
 
 async function shareCentre(card) {
   const text = buildCentreShareText(card);
-  const centre = (card.dataset.centre || "centre").replace(/\s+/g, "-");
-  const qrEl = card.querySelector(".centre-body .qr-figure img");
-
-  // Mobile: native share with maps QR attached
-  if (isMobileDevice() && qrEl && navigator.canShare) {
-    try {
-      const res = await fetch(qrEl.src, { mode: "cors" });
-      if (res.ok) {
-        const blob = await res.blob();
-        const file = new File([blob], `${centre}-Map-QR.png`, {
-          type: blob.type || "image/png",
-        });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            text,
-            title: `Satya Sadhna Kendra — ${card.dataset.centre || ""}`,
-          });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e && e.name === "AbortError") return;
-      console.warn("Centre share failed, falling back to text:", e);
-    }
-  }
-
-  // Web fallback: wa.me text
+  // Same on mobile and web: text-only WhatsApp share (the maps link in the
+  // text opens Google Maps directly; QR is unnecessary).
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
 }
 
