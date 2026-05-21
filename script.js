@@ -786,8 +786,6 @@ function buildAppShareText() {
   return [
     "*Satya Sadhna — Mobile App*",
     "",
-    "Daily and weekly Zoom sittings, course reminders, and recordings — all in one place.",
-    "",
     "*Download on Google Play:*",
     playLink,
     "",
