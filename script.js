@@ -659,29 +659,7 @@ function buildOnlineShareText() {
 
 async function shareOnlineSchedule() {
   const text = buildOnlineShareText();
-  const qrEl = document.querySelector(".online-card-wide .qr-figure img");
-
-  // Mobile: try native share with QR file attached
-  if (isMobileDevice() && qrEl && navigator.canShare) {
-    try {
-      const res = await fetch(qrEl.src, { mode: "cors" });
-      if (res.ok) {
-        const blob = await res.blob();
-        const file = new File([blob], "Satya-Sadhna-Zoom-QR.png", {
-          type: blob.type || "image/png",
-        });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text, title: "Satya Sadhna — Online Sessions" });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e && e.name === "AbortError") return;
-      console.warn("Online share failed, falling back to text:", e);
-    }
-  }
-
-  // Web / fallback: wa.me text share
+  // Text-only on both mobile and web (Zoom join link is in the text).
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
 }
 
