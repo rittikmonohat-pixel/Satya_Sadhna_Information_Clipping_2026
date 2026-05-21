@@ -622,8 +622,9 @@ function buildOnlineShareText() {
     out.push("");
   }
 
-  // Schedule (timings) after Zoom details
-  const articles = document.querySelectorAll(".recurring-grid > article");
+  // Schedule (timings) after Zoom details — only the online grid (the one with the Zoom box)
+  const onlineGrid = document.querySelector(".zoom-box")?.closest(".recurring-grid");
+  const articles = onlineGrid ? onlineGrid.querySelectorAll(":scope > article") : [];
   articles.forEach((art) => {
     const h3 = art.querySelector("h3")?.textContent.trim();
     if (!h3 || h3.toLowerCase().includes("how to join")) return;
