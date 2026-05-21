@@ -438,20 +438,122 @@ const DOWNLOAD_ICON_SVG =
   '<path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1Zm-7 15a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"/>' +
   "</svg>";
 
+// Compose a donation-card image (centre label + QR + bank details) on a canvas.
+async function composeDonationImage(card) {
+  const centre = (card.dataset.centre || "Donation").trim();
+  const imgEl = card.querySelector(".donation-card-body img");
+  const p = card.querySelector(".donation-card-body p");
+  if (!imgEl || !p) return null;
+
+  const accountName = (p.querySelector("strong")?.textContent || "").trim();
+  const html = p.innerHTML;
+  const afterStrong = html.split(/<\/strong>/i)[1] || "";
+  const lines = afterStrong
+    .split(/<br\s*\/?\s*>/i)
+    .map((s) => s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  // Load QR image
+  const qrImg = await new Promise((resolve, reject) => {
+    const im = new Image();
+    im.crossOrigin = "anonymous";
+    im.onload = () => resolve(im);
+    im.onerror = reject;
+    im.src = imgEl.src;
+  });
+
+  // Canvas layout (2:1.05 portrait-ish, generous padding)
+  const W = 1400, H = 760;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+
+  // White card background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, W, H);
+  // Subtle outer border
+  ctx.strokeStyle = "#e8eef3";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(24, 24, W - 48, H - 48);
+
+  // Centre label (amber, uppercase, tracked)
+  ctx.font = "800 22px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#C89860";
+  ctx.textBaseline = "alphabetic";
+  // Letter-spacing trick by drawing char-by-char isn't necessary; spaces are enough visually.
+  const label = centre.toUpperCase();
+  ctx.fillText(label, 72, 90);
+
+  // Divider line under label
+  ctx.strokeStyle = "#e8eef3";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(72, 112);
+  ctx.lineTo(W - 72, 112);
+  ctx.stroke();
+
+  // QR frame and image
+  const qrSize = 420;
+  const qrX = 88;
+  const qrY = 170;
+  ctx.fillStyle = "#fafbfc";
+  ctx.strokeStyle = "#e8eef3";
+  ctx.lineWidth = 1;
+  const pad = 14;
+  ctx.fillRect(qrX - pad, qrY - pad, qrSize + pad * 2, qrSize + pad * 2);
+  ctx.strokeRect(qrX - pad, qrY - pad, qrSize + pad * 2, qrSize + pad * 2);
+  ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+  // Bank details on the right
+  const textX = qrX + qrSize + 90;
+  let y = qrY + 36;
+
+  // Account name (bold)
+  ctx.font = "700 34px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#1E3A5F";
+  ctx.fillText(accountName, textX, y);
+  y += 52;
+
+  // Detail lines (bold the part before ':' for A/C, IFSC, MICR etc.)
+  lines.forEach((line) => {
+    const m = line.match(/^([^:]+:)\s*(.+)$/);
+    if (m) {
+      ctx.font = "700 24px Inter, system-ui, sans-serif";
+      ctx.fillStyle = "#1E3A5F";
+      const labelW = ctx.measureText(m[1] + " ").width;
+      ctx.fillText(m[1], textX, y);
+      ctx.font = "400 24px Inter, system-ui, sans-serif";
+      ctx.fillText(" " + m[2], textX + ctx.measureText(m[1]).width, y);
+    } else {
+      ctx.font = "400 24px Inter, system-ui, sans-serif";
+      ctx.fillStyle = "#1E3A5F";
+      ctx.fillText(line, textX, y);
+    }
+    y += 38;
+  });
+
+  // Footer
+  ctx.font = "500 18px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#3D6488";
+  ctx.fillText("Scan with any UPI app to donate  ·  80-G tax exempt", 72, H - 70);
+  ctx.font = "600 17px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "#1E3A5F";
+  ctx.fillText("satya-sadhna-information-clipping.vercel.app", 72, H - 42);
+
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+}
+
 async function shareDonationCard(card) {
   const text = buildDonationShareText(card);
-  if (!text) return;
   const centre = (card.dataset.centre || "donation").replace(/\s+/g, "-");
-  const imgEl = card.querySelector(".donation-card-body img");
-
   try {
-    const res = await fetch(imgEl.src, { mode: "cors" });
-    if (!res.ok) throw new Error("fetch failed");
-    const blob = await res.blob();
-    const file = new File([blob], `${centre}-UPI-QR.jpg`, {
-      type: blob.type || "image/jpeg",
+    const blob = await composeDonationImage(card);
+    if (!blob) return;
+    const file = new File([blob], `${centre}-Donation-Details.jpg`, {
+      type: "image/jpeg",
     });
-    if (navigator.canShare({ files: [file] })) {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
         files: [file],
         text,
@@ -465,16 +567,17 @@ async function shareDonationCard(card) {
   }
 }
 
-function downloadDonationQR(card) {
-  const imgEl = card.querySelector(".donation-card-body img");
-  if (!imgEl) return;
+async function downloadDonationQR(card) {
+  const blob = await composeDonationImage(card);
+  if (!blob) return;
   const centre = (card.dataset.centre || "donation").replace(/\s+/g, "-");
   const a = document.createElement("a");
-  a.href = imgEl.src;
-  a.download = `${centre}-UPI-QR.jpg`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `${centre}-Donation-Details.jpg`;
   document.body.appendChild(a);
   a.click();
   a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 document.querySelectorAll(".share-donation").forEach((btn) => {
@@ -485,6 +588,9 @@ document.querySelectorAll(".share-donation").forEach((btn) => {
     btn.title = `Download ${centreShort} QR`;
     btn.setAttribute("aria-label", `Download ${centreShort} UPI QR code`);
     btn.classList.add("download-icon-only");
+    // Move into the QR figure so it overlays the QR corner
+    const figure = card?.querySelector(".donation-card-body figure");
+    if (figure) figure.appendChild(btn);
     btn.addEventListener("click", () => downloadDonationQR(card));
   } else {
     btn.addEventListener("click", () => shareDonationCard(card));
