@@ -688,3 +688,84 @@ async function shareOnlineSchedule() {
 document.querySelectorAll(".share-online").forEach((btn) => {
   btn.addEventListener("click", shareOnlineSchedule);
 });
+
+// ── Share centre (map + address + contacts) ───────────────────────────────────
+function buildCentreShareText(card) {
+  const centreName = card.dataset.centre || (card.querySelector("h3")?.textContent || "").trim();
+  const city = (card.querySelector(".city")?.textContent || "").trim();
+  const mapUrl = card.dataset.mapUrl || "";
+
+  const addressEl = card.querySelector(".centre-address");
+  const addressLines = addressEl
+    ? addressEl.innerHTML
+        .split(/<br\s*\/?\s*>/i)
+        .map((s) => s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+    : [];
+
+  const phones = Array.from(card.querySelectorAll(".centre-contact a")).map((a) =>
+    a.textContent.trim(),
+  );
+
+  const out = [`*Satya Sadhna Kendra — ${centreName}*`];
+  if (city) out.push(city);
+  out.push("");
+  if (addressLines.length) {
+    out.push("*Address:*");
+    addressLines.forEach((l) => out.push(l));
+    out.push("");
+  }
+  if (phones.length) {
+    out.push("*Contact:*");
+    phones.forEach((p) => out.push(p));
+    out.push("");
+  }
+  if (mapUrl) {
+    out.push("*Directions:*");
+    out.push(mapUrl);
+    out.push("");
+  }
+  out.push("More info:");
+  out.push("https://satya-sadhna-information-clipping.vercel.app");
+  return out.join("\n");
+}
+
+async function shareCentre(card) {
+  const text = buildCentreShareText(card);
+  const centre = (card.dataset.centre || "centre").replace(/\s+/g, "-");
+  const qrEl = card.querySelector(".centre-body .qr-figure img");
+
+  // Mobile: native share with maps QR attached
+  if (isMobileDevice() && qrEl && navigator.canShare) {
+    try {
+      const res = await fetch(qrEl.src, { mode: "cors" });
+      if (res.ok) {
+        const blob = await res.blob();
+        const file = new File([blob], `${centre}-Map-QR.png`, {
+          type: blob.type || "image/png",
+        });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            text,
+            title: `Satya Sadhna Kendra — ${card.dataset.centre || ""}`,
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+      console.warn("Centre share failed, falling back to text:", e);
+    }
+  }
+
+  // Web fallback: wa.me text
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+}
+
+document.querySelectorAll(".share-centre").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const card = btn.closest(".centre-card");
+    if (card) shareCentre(card);
+  });
+});

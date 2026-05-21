@@ -2069,3 +2069,15 @@ blockquote {
 @media (max-width: 600px) {
   .zoom-contact .share-online { align-self: stretch; justify-content: center; }
 }
+
+/* ── Centre card share button ── */
+.centre-info .share-centre {
+  margin-top: 14px;
+  padding: 9px 18px;
+  font-size: 12px;
+  align-self: flex-start;
+  display: inline-flex;
+}
+@media (max-width: 600px) {
+  .centre-info .share-centre { align-self: stretch; justify-content: center; }
+}
