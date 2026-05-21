@@ -779,3 +779,26 @@ document.querySelectorAll(".share-social").forEach((btn) => {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
   });
 });
+
+// ── Share Satya Sadhna mobile app ─────────────────────────────────────────────
+function buildAppShareText() {
+  const playLink = document.querySelector(".play-badge")?.getAttribute("href") || "";
+  return [
+    "*Satya Sadhna — Mobile App*",
+    "",
+    "Daily and weekly Zoom sittings, course reminders, and recordings — all in one place.",
+    "",
+    "*Download on Google Play:*",
+    playLink,
+    "",
+    "More info:",
+    "https://satya-sadhna-information-clipping.vercel.app#connect",
+  ].join("\n");
+}
+
+document.querySelectorAll(".share-app").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const text = buildAppShareText();
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
+});
