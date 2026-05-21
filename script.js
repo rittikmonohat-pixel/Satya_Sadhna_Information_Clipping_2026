@@ -367,9 +367,7 @@ function buildScheduleShareText() {
     if (note) lines.push(`  _${note}_`);
     lines.push("");
   });
-  lines.push("Apply & full details:");
-  lines.push("https://satya-sadhna-information-clipping.vercel.app");
-  return lines.join("\n");
+  return lines.join("\n").trimEnd();
 }
 
 document.querySelectorAll(".share-schedule").forEach((btn) => {
@@ -407,10 +405,7 @@ function buildDonationShareText(card) {
   });
   out.push("");
   out.push("_All donations qualify for 80-G tax deduction._");
-  out.push("");
-  out.push("Full details & UPI QR:");
-  out.push("https://satya-sadhna-information-clipping.vercel.app#support");
-  return out.join("\n");
+  return out.join("\n").trimEnd();
 }
 
 function supportsFileShare() {
@@ -652,9 +647,7 @@ function buildOnlineShareText() {
     }
   }
 
-  out.push("More info:");
-  out.push("https://satya-sadhna-information-clipping.vercel.app");
-  return out.join("\n");
+  return out.join("\n").trimEnd();
 }
 
 async function shareOnlineSchedule() {
@@ -703,9 +696,7 @@ function buildCentreShareText(card) {
     out.push(mapUrl);
     out.push("");
   }
-  out.push("More info:");
-  out.push("https://satya-sadhna-information-clipping.vercel.app");
-  return out.join("\n");
+  return out.join("\n").trimEnd();
 }
 
 async function shareCentre(card) {
@@ -744,9 +735,7 @@ function buildAboutShareText() {
     }
   }
 
-  out.push("More info:");
-  out.push("https://satya-sadhna-information-clipping.vercel.app#practice");
-  return out.join("\n");
+  return out.join("\n").trimEnd();
 }
 
 document.querySelectorAll(".share-about").forEach((btn) => {
@@ -768,9 +757,7 @@ function buildSocialShareText() {
       out.push("");
     }
   });
-  out.push("More info:");
-  out.push("https://satya-sadhna-information-clipping.vercel.app#connect");
-  return out.join("\n");
+  return out.join("\n").trimEnd();
 }
 
 document.querySelectorAll(".share-social").forEach((btn) => {
@@ -788,9 +775,6 @@ function buildAppShareText() {
     "",
     "*Download on Google Play:*",
     playLink,
-    "",
-    "More info:",
-    "https://satya-sadhna-information-clipping.vercel.app#connect",
   ].join("\n");
 }
 
