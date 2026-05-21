@@ -420,7 +420,18 @@ function supportsFileShare() {
     return navigator.canShare({ files: [probe] });
   } catch (e) { return false; }
 }
-const DONATION_SHARE_MODE = supportsFileShare() ? "share" : "download";
+function isMobileDevice() {
+  if (typeof navigator === "undefined") return false;
+  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return true;
+  // Touch + coarse pointer is a reliable proxy for "phone/tablet"
+  return (
+    (navigator.maxTouchPoints || 0) > 0 &&
+    window.matchMedia &&
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+const DONATION_SHARE_MODE =
+  isMobileDevice() && supportsFileShare() ? "share" : "download";
 
 const DOWNLOAD_ICON_SVG =
   '<svg class="share-wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
