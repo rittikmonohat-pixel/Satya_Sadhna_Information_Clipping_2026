@@ -2184,6 +2184,7 @@ blockquote {
 
 /* ── Inline Apply button on open schedule rows ── */
 .schedule-row .sr-loc { display: flex; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; }
+.schedule-row .sr-apply { margin-left: auto; }
 .sr-apply {
   display: inline-flex;
   align-items: center;
@@ -2210,5 +2211,6 @@ blockquote {
     align-items: flex-start;
     gap: 10px;
   }
+  .schedule-row .sr-apply { margin-left: 0; }
   .sr-apply { padding: 6px 14px; font-size: 11.5px; }
 }
