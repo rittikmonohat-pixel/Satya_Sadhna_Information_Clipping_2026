@@ -115,7 +115,10 @@ if (heroVisual && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
 // ── Live schedule from Google Sheet ─────────────────────────────────────────
 // To enable: publish your Google Sheet to web as CSV, then paste the URL below.
 // (Google Sheets → File → Share → Publish to web → CSV → copy link)
-// Expected columns (with a header row): Dates | Course | Location | Note (optional)
+// Expected columns (with a header row):
+//   Dates | Course | Location | Note (optional) | Status (optional)
+// If Status is filled, it overrides the auto-computed 'Open now / Opens DD MMM'
+// badge for that row. Leave blank to use the default 8-week window logic.
 // If empty or fetch fails, the static rows already in the HTML stay as fallback.
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQutDtPOWq6ED4MA00ipySvCv8SHN4fbnQJ5Q5o2V6NxxWuvKzc7zeby4s1bsIKuXIG4uJptEc90nJm/pub?output=csv";
 
@@ -177,6 +180,19 @@ function decorateScheduleStatus() {
     row.querySelector(".sr-status")?.remove();
     const dateEl = row.querySelector(".sr-date");
     if (!dateEl) return;
+
+    const badge = document.createElement("span");
+    badge.className = "sr-status";
+
+    // Manual override from the sheet's Status column (5th column)
+    const override = row.dataset.statusOverride;
+    if (override) {
+      badge.textContent = override;
+      badge.classList.add(/open|now|live/i.test(override) ? "status-open" : "status-soon");
+      dateEl.appendChild(badge);
+      return;
+    }
+
     // Read only the leading text node so we don't pick up a previously-injected badge
     const dateText = (dateEl.firstChild?.textContent || dateEl.textContent || "").trim();
     const cutoff = courseCutoffUTC(dateText);
@@ -184,8 +200,6 @@ function decorateScheduleStatus() {
     const now = Date.now();
     const eightWeeks = 56 * 24 * 3600 * 1000;
 
-    const badge = document.createElement("span");
-    badge.className = "sr-status";
     if (cutoff <= now + eightWeeks) {
       badge.classList.add("status-open");
       badge.textContent = "Open now";
@@ -230,9 +244,10 @@ async function loadSchedule() {
     list.querySelectorAll(".schedule-row").forEach((r) => r.remove());
 
     const frag = document.createDocumentFragment();
-    dataRows.forEach(([date, course, location, note]) => {
+    dataRows.forEach(([date, course, location, note, status]) => {
       const row = document.createElement("div");
       row.className = "schedule-row";
+      if (status && status.trim()) row.dataset.statusOverride = status.trim();
       const noteHtml = note && note.trim()
         ? `<span class="course-note">${escapeHtml(note.trim())}</span>` : "";
       row.innerHTML =
