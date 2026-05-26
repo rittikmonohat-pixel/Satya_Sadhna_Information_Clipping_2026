@@ -593,7 +593,7 @@ blockquote {
 }
 .schedule-head, .schedule-row {
   display: grid;
-  grid-template-columns: minmax(160px, 200px) 1fr minmax(140px, 180px);
+  grid-template-columns: minmax(160px, 200px) 1fr minmax(240px, 280px);
   gap: 18px;
   padding: 12px 18px;
   border-bottom: 1px solid var(--light-line);
@@ -2183,7 +2183,7 @@ blockquote {
 }
 
 /* ── Inline Apply button on open schedule rows ── */
-.schedule-row .sr-loc { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.schedule-row .sr-loc { display: flex; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; }
 .sr-apply {
   display: inline-flex;
   align-items: center;
@@ -2205,6 +2205,10 @@ blockquote {
   transform: translateY(-1px);
 }
 @media (max-width: 900px) {
-  .schedule-row .sr-loc { gap: 10px; }
+  .schedule-row .sr-loc {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
   .sr-apply { padding: 6px 14px; font-size: 11.5px; }
 }
