@@ -432,7 +432,9 @@ function buildScheduleShareText() {
   if (!rows.length) return "";
   const lines = ["*Satya Sadhna — Course Schedule*", ""];
   rows.forEach((row) => {
-    const date = (row.querySelector(".sr-date")?.textContent || "").trim();
+    const dateEl = row.querySelector(".sr-date");
+    // Read only the leading date text node — skip the .sr-status badge
+    const date = ((dateEl?.firstChild?.textContent) || dateEl?.textContent || "").trim();
     const courseEl = row.querySelector(".sr-course");
     let course = "";
     let note = "";
@@ -445,7 +447,8 @@ function buildScheduleShareText() {
         .join("")
         .trim();
     }
-    const loc = (row.querySelector(".sr-loc")?.textContent || "").trim();
+    // Read only the .loc-badge — skip the inline Apply button
+    const loc = (row.querySelector(".sr-loc .loc-badge")?.textContent || "").trim();
     lines.push(`• *${date}*`);
     lines.push(`  ${course}`);
     lines.push(`  ${loc}`);
