@@ -175,40 +175,68 @@ function filterPastStaticRows() {
 }
 
 const STATUS_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function buildRowCourseValue(row) {
+  const dateEl = row.querySelector(".sr-date");
+  const date = ((dateEl?.firstChild?.textContent) || dateEl?.textContent || "").trim();
+  const courseEl = row.querySelector(".sr-course");
+  let courseName = "";
+  if (courseEl) {
+    courseName = Array.from(courseEl.childNodes)
+      .filter((n) => !(n.nodeType === 1 && n.classList.contains("course-note")))
+      .map((n) => n.textContent)
+      .join("")
+      .trim();
+  }
+  const loc = (row.querySelector(".sr-loc .loc-badge")?.textContent || "").trim();
+  return `${date} — ${courseName} — ${loc}`;
+}
+
 function decorateScheduleStatus() {
   document.querySelectorAll(".schedule-list .schedule-row").forEach((row) => {
     row.querySelector(".sr-status")?.remove();
+    row.querySelector(".sr-apply")?.remove();
     const dateEl = row.querySelector(".sr-date");
     if (!dateEl) return;
 
     const badge = document.createElement("span");
     badge.className = "sr-status";
+    let isOpen = false;
 
     // Manual override from the sheet's Status column (5th column)
     const override = row.dataset.statusOverride;
     if (override) {
       badge.textContent = override;
-      badge.classList.add(/open|now|live/i.test(override) ? "status-open" : "status-soon");
-      dateEl.appendChild(badge);
-      return;
-    }
-
-    // Read only the leading text node so we don't pick up a previously-injected badge
-    const dateText = (dateEl.firstChild?.textContent || dateEl.textContent || "").trim();
-    const cutoff = courseCutoffUTC(dateText);
-    if (cutoff == null) return;
-    const now = Date.now();
-    const eightWeeks = 56 * 24 * 3600 * 1000;
-
-    if (cutoff <= now + eightWeeks) {
-      badge.classList.add("status-open");
-      badge.textContent = "Open now";
+      isOpen = /open|now|live/i.test(override);
+      badge.classList.add(isOpen ? "status-open" : "status-soon");
     } else {
-      badge.classList.add("status-soon");
-      const opensAt = new Date(cutoff - eightWeeks);
-      badge.textContent = `Opens ${opensAt.getUTCDate()} ${STATUS_MONTHS[opensAt.getUTCMonth()]}`;
+      const dateText = ((dateEl.firstChild?.textContent) || dateEl.textContent || "").trim();
+      const cutoff = courseCutoffUTC(dateText);
+      if (cutoff == null) return;
+      const now = Date.now();
+      const eightWeeks = 56 * 24 * 3600 * 1000;
+      if (cutoff <= now + eightWeeks) {
+        badge.classList.add("status-open");
+        badge.textContent = "Open now";
+        isOpen = true;
+      } else {
+        badge.classList.add("status-soon");
+        const opensAt = new Date(cutoff - eightWeeks);
+        badge.textContent = `Opens ${opensAt.getUTCDate()} ${STATUS_MONTHS[opensAt.getUTCMonth()]}`;
+      }
     }
     dateEl.appendChild(badge);
+
+    // Apply button on open rows — pre-selects this course in the modal
+    if (isOpen) {
+      const courseValue = buildRowCourseValue(row);
+      const applyBtn = document.createElement("button");
+      applyBtn.type = "button";
+      applyBtn.className = "sr-apply";
+      applyBtn.textContent = "Apply →";
+      applyBtn.setAttribute("aria-label", `Apply for ${courseValue}`);
+      applyBtn.addEventListener("click", (e) => openApplyModal(e, courseValue));
+      row.querySelector(".sr-loc")?.appendChild(applyBtn);
+    }
   });
 }
 
@@ -299,9 +327,11 @@ function populateApplyCourses() {
   applyCourseSelect.innerHTML = '<option value="">Select a course…</option>';
   let count = 0;
   rows.forEach((row) => {
-    const date = (row.querySelector(".sr-date")?.textContent || "").trim();
-    if (!isWithinApplyWindow(date)) return;
+    // Only include rows whose status badge marks them open
+    if (!row.querySelector(".sr-status.status-open")) return;
     count++;
+    const dateText = ((row.querySelector(".sr-date")?.firstChild?.textContent)
+      || row.querySelector(".sr-date")?.textContent || "").trim();
     const courseEl = row.querySelector(".sr-course");
     let note = "";
     let courseName = "";
@@ -314,10 +344,10 @@ function populateApplyCourses() {
         .join("")
         .trim();
     }
-    const loc = (row.querySelector(".sr-loc")?.textContent || "").trim();
+    const loc = (row.querySelector(".sr-loc .loc-badge")?.textContent || "").trim();
     const opt = document.createElement("option");
-    opt.value = `${date} — ${courseName} — ${loc}`;
-    opt.textContent = `${date} · ${courseName} · ${loc}`;
+    opt.value = `${dateText} — ${courseName} — ${loc}`;
+    opt.textContent = `${dateText} · ${courseName} · ${loc}`;
     if (note) opt.dataset.note = note;
     applyCourseSelect.appendChild(opt);
   });
@@ -329,11 +359,20 @@ function populateApplyCourses() {
   }
 }
 
-function openApplyModal(e) {
-  if (e) e.preventDefault();
+function openApplyModal(e, preselectCourseValue) {
+  if (e && typeof e.preventDefault === "function") e.preventDefault();
   if (!applyModal) return;
   populateApplyCourses();
-  if (applyNoteBox) { applyNoteBox.hidden = true; applyNoteBox.textContent = ""; }
+  if (preselectCourseValue && applyCourseSelect) {
+    const match = Array.from(applyCourseSelect.options).find((o) => o.value === preselectCourseValue);
+    if (match) {
+      applyCourseSelect.value = preselectCourseValue;
+      applyCourseSelect.dispatchEvent(new Event("change"));
+    }
+  } else if (applyNoteBox) {
+    applyNoteBox.hidden = true;
+    applyNoteBox.textContent = "";
+  }
   applyModal.classList.add("is-open");
   applyModal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
