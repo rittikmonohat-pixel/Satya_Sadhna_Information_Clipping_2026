@@ -1994,7 +1994,7 @@ blockquote {
 @media (max-width: 600px) {
   .apply-modal-card { margin: 3vh 14px; padding: 26px 20px 22px; max-height: 94vh; }
   .apply-modal-card h3 { font-size: 22px; }
-  .apply-row { grid-template-columns: 1fr; }
+  .apply-row { gap: 10px; }
 }
 
 /* ── Share schedule button ── */
