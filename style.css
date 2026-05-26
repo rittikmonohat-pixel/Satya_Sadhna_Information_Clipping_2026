@@ -2304,3 +2304,84 @@ blockquote {
   font-style: italic;
 }
 .custom-select-option.is-disabled:hover { background: transparent; }
+
+/* ── Course popup (overlays the apply modal) ── */
+.course-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+}
+.course-popup[hidden] { display: none; }
+.course-popup-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 30, 50, 0.55);
+  backdrop-filter: blur(2px);
+}
+.course-popup-sheet {
+  position: relative;
+  max-width: 560px;
+  margin: 8vh auto;
+  background: var(--white);
+  border-radius: 14px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 90px rgba(15, 30, 50, 0.35);
+  overflow: hidden;
+}
+.course-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--light-line);
+  flex-shrink: 0;
+}
+.course-popup-header h4 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.course-popup-close {
+  background: none;
+  border: 0;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--navy);
+  padding: 4px 8px;
+}
+.course-popup-close:hover { color: var(--amber); }
+.course-popup .custom-select-list {
+  position: static;
+  margin: 0;
+  padding: 10px;
+  list-style: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  max-height: none;
+  overflow-y: auto;
+  flex: 1;
+}
+.course-popup .custom-select-option {
+  padding: 12px 14px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+.course-popup .custom-select-option:hover {
+  background: rgba(200, 152, 96, 0.14);
+  border-color: rgba(200, 152, 96, 0.4);
+}
+@media (max-width: 600px) {
+  .course-popup-sheet { margin: 4vh 12px; max-height: 90vh; }
+  .course-popup-header { padding: 14px 16px; }
+  .course-popup-header h4 { font-size: 19px; }
+  .course-popup .custom-select-option { padding: 12px; font-size: 13.5px; }
+}

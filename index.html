@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1779517500">
+    <link rel="stylesheet" href="style.css?v=1779520000">
     <!-- Vercel Web Analytics -->
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -715,7 +715,6 @@
                   <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </button>
-              <ul class="custom-select-list" role="listbox" hidden></ul>
             </div>
             <input type="hidden" name="course" id="applyCourse" required>
           </label>
@@ -725,6 +724,17 @@
       </div>
     </div>
 
-    <script src="script.js?v=1779518500"></script>
+    <div class="course-popup" id="coursePopup" hidden aria-hidden="true">
+      <div class="course-popup-backdrop" data-close-course></div>
+      <div class="course-popup-sheet" role="dialog" aria-modal="true" aria-labelledby="coursePopupTitle">
+        <header class="course-popup-header">
+          <h4 id="coursePopupTitle">Select a course</h4>
+          <button type="button" class="course-popup-close" data-close-course aria-label="Close">&times;</button>
+        </header>
+        <ul class="custom-select-list" id="applyCourseList" role="listbox"></ul>
+      </div>
+    </div>
+
+    <script src="script.js?v=1779520000"></script>
   </body>
 </html>

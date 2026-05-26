@@ -315,7 +315,8 @@ const applyForm = document.getElementById("applyForm");
 const customSelectEl = document.getElementById("applyCourseSelect");
 const customSelectBtn = customSelectEl?.querySelector(".custom-select-btn");
 const customSelectValue = customSelectEl?.querySelector(".custom-select-value");
-const customSelectList = customSelectEl?.querySelector(".custom-select-list");
+const coursePopup = document.getElementById("coursePopup");
+const customSelectList = document.getElementById("applyCourseList");
 const DEFAULT_COURSE_LABEL = "Select a course…";
 
 function populateApplyCourses() {
@@ -376,39 +377,36 @@ function setApplyCourse(value, label, note) {
 }
 
 function openCourseList() {
-  if (!customSelectList) return;
-  customSelectList.hidden = false;
+  if (!coursePopup) return;
+  populateApplyCourses();
+  coursePopup.hidden = false;
+  coursePopup.setAttribute("aria-hidden", "false");
   customSelectEl?.classList.add("is-open");
   customSelectBtn?.setAttribute("aria-expanded", "true");
 }
 function closeCourseList() {
-  if (!customSelectList) return;
-  customSelectList.hidden = true;
+  if (!coursePopup) return;
+  coursePopup.hidden = true;
+  coursePopup.setAttribute("aria-hidden", "true");
   customSelectEl?.classList.remove("is-open");
   customSelectBtn?.setAttribute("aria-expanded", "false");
 }
 
-customSelectBtn?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  if (customSelectList?.hidden) {
-    populateApplyCourses();
-    openCourseList();
-  } else {
-    closeCourseList();
-  }
+customSelectBtn?.addEventListener("click", () => {
+  if (coursePopup?.hidden) openCourseList();
+  else closeCourseList();
 });
 
 customSelectList?.addEventListener("click", (e) => {
-  e.stopPropagation();
   const opt = e.target.closest(".custom-select-option");
   if (!opt || opt.classList.contains("is-disabled")) return;
   setApplyCourse(opt.dataset.value, opt.textContent, opt.dataset.note);
   closeCourseList();
 });
 
-document.addEventListener("click", (e) => {
-  if (!customSelectEl?.contains(e.target)) closeCourseList();
-});
+coursePopup?.querySelectorAll("[data-close-course]").forEach((el) =>
+  el.addEventListener("click", closeCourseList),
+);
 
 function openApplyModal(e, preselectCourseValue) {
   if (e && typeof e.preventDefault === "function") e.preventDefault();
@@ -445,7 +443,9 @@ applyModal?.querySelectorAll("[data-close]").forEach((el) =>
   el.addEventListener("click", closeApplyModal),
 );
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && applyModal?.classList.contains("is-open")) closeApplyModal();
+  if (e.key !== "Escape") return;
+  if (coursePopup && !coursePopup.hidden) { closeCourseList(); return; }
+  if (applyModal?.classList.contains("is-open")) closeApplyModal();
 });
 
 applyForm?.addEventListener("submit", (e) => {
