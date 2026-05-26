@@ -507,147 +507,19 @@ applyForm?.addEventListener("submit", (e) => {
     return;
   }
   const fd = new FormData(applyForm);
-  const data = {
-    name: String(fd.get("name") || "").trim(),
-    age: String(fd.get("age") || "").trim(),
-    gender: String(fd.get("gender") || "").trim(),
-    mobile: String(fd.get("mobile") || "").trim(),
-    address: String(fd.get("address") || "").trim(),
-    course: String(fd.get("course") || "").trim(),
-  };
   const msg =
-    `Hello, I'd like to apply for a Satya Sadhna course. ` +
-    `Application form attached.\n\n` +
-    `Name: *${data.name}*\n` +
-    `Course: *${data.course}*\n\n` +
+    `Hello, I'd like to apply for a Satya Sadhna course.\n\n` +
+    `Name: *${fd.get("name")}*\n` +
+    `Age: *${fd.get("age")}*\n` +
+    `Gender: *${fd.get("gender")}*\n` +
+    `Mobile: *${fd.get("mobile")}*\n` +
+    `Address: *${fd.get("address")}*\n` +
+    `Course: *${fd.get("course")}*\n\n` +
     `Please share the next steps. Thank you.`;
-  submitApplyWithPdf(data, msg).finally(() => closeApplyModal());
+  const url = `https://wa.me/917980642692?text=${encodeURIComponent(msg)}`;
+  window.open(url, "_blank", "noopener");
+  closeApplyModal();
 });
-
-function buildApplicationPdfBlob(data) {
-  if (!window.jspdf?.jsPDF) return null;
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const W = doc.internal.pageSize.getWidth();
-  const NAVY = [30, 58, 95];
-  const AMBER = [200, 152, 96];
-  const MID = [61, 100, 136];
-  const margin = 56;
-  let y = 70;
-
-  // Header — brand
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.setTextColor(...NAVY);
-  doc.text("Satya Sadhna", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(...AMBER);
-  doc.text("APPLICATION FORM", margin, y + 18);
-
-  // Date — top right
-  const today = new Date();
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const dateStr = `${String(today.getDate()).padStart(2,"0")} ${months[today.getMonth()]} ${today.getFullYear()}`;
-  doc.setFontSize(10);
-  doc.setTextColor(...MID);
-  doc.text(dateStr, W - margin, y, { align: "right" });
-
-  // Divider
-  y += 36;
-  doc.setDrawColor(...AMBER);
-  doc.setLineWidth(0.8);
-  doc.line(margin, y, W - margin, y);
-
-  // Fields
-  y += 32;
-  const fields = [
-    ["Full Name", data.name],
-    ["Age", data.age],
-    ["Gender", data.gender],
-    ["Mobile Number", data.mobile],
-    ["Address", data.address],
-    ["Course", data.course],
-  ];
-  fields.forEach(([label, value]) => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.setTextColor(...AMBER);
-    doc.text(label.toUpperCase(), margin, y);
-    y += 14;
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(13);
-    doc.setTextColor(...NAVY);
-    const lines = doc.splitTextToSize(value || "—", W - margin * 2);
-    doc.text(lines, margin, y);
-    y += lines.length * 17;
-
-    // underline
-    doc.setDrawColor(220, 226, 232);
-    doc.setLineWidth(0.4);
-    doc.line(margin, y, W - margin, y);
-    y += 22;
-  });
-
-  // Footer note
-  y += 20;
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(10);
-  doc.setTextColor(...MID);
-  doc.text(
-    "Applications typically open 6 to 8 weeks before the course start date.",
-    margin,
-    y,
-  );
-  doc.text("We will respond via WhatsApp at the mobile number provided above.", margin, y + 14);
-
-  return doc.output("blob");
-}
-
-async function submitApplyWithPdf(data, message) {
-  const phone = "917980642692";
-  let blob = null;
-  try {
-    blob = buildApplicationPdfBlob(data);
-  } catch (e) {
-    console.warn("PDF generation failed, falling back to text:", e);
-  }
-
-  const safeName = (data.name || "Applicant").replace(/[^\p{L}\p{N}\s-]+/gu, "").replace(/\s+/g, "-").slice(0, 40);
-  const fileName = `Satya-Sadhna-Application-${safeName || "Applicant"}.pdf`;
-
-  // Mobile path: share the PDF + text via the system share sheet (WhatsApp etc.)
-  if (blob && isMobileDevice() && navigator.canShare) {
-    try {
-      const file = new File([blob], fileName, { type: "application/pdf" });
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          text: message,
-          title: "Satya Sadhna — Application Form",
-        });
-        return;
-      }
-    } catch (e) {
-      if (e && e.name === "AbortError") return;
-      console.warn("Native share failed, falling back:", e);
-    }
-  }
-
-  // Desktop / fallback path: download the PDF, then open WhatsApp with the text
-  if (blob) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-  }
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
-}
 
 // ── Share schedule on WhatsApp ────────────────────────────────────────────────
 function buildScheduleShareText() {
