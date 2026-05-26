@@ -696,13 +696,15 @@
           <div class="apply-row">
             <label>Age<input type="number" name="age" min="1" max="120" required></label>
             <label>Gender
-              <select name="gender" required>
-                <option value="">Select&hellip;</option>
-                <option>Female</option>
-                <option>Male</option>
-                <option>Other</option>
-                <option>Prefer not to say</option>
-              </select>
+              <div class="custom-select" id="applyGenderSelect">
+                <button type="button" class="custom-select-btn" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="custom-select-value is-placeholder">Select&hellip;</span>
+                  <svg class="custom-select-arrow" viewBox="0 0 12 8" aria-hidden="true" focusable="false">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <input type="hidden" name="gender" id="applyGender" required>
             </label>
           </div>
           <label>Mobile number<input type="tel" name="mobile" required autocomplete="tel" inputmode="tel" pattern="[+0-9 ()-]{7,}" placeholder="+91 XXXXX XXXXX"></label>
@@ -735,6 +737,22 @@
       </div>
     </div>
 
-    <script src="script.js?v=1779520000"></script>
+    <div class="course-popup" id="genderPopup" hidden aria-hidden="true">
+      <div class="course-popup-backdrop" data-close-gender></div>
+      <div class="course-popup-sheet" role="dialog" aria-modal="true" aria-labelledby="genderPopupTitle">
+        <header class="course-popup-header">
+          <h4 id="genderPopupTitle">Select gender</h4>
+          <button type="button" class="course-popup-close" data-close-gender aria-label="Close">&times;</button>
+        </header>
+        <ul class="custom-select-list" id="applyGenderList" role="listbox">
+          <li class="custom-select-option" role="option" tabindex="0" data-value="Female">Female</li>
+          <li class="custom-select-option" role="option" tabindex="0" data-value="Male">Male</li>
+          <li class="custom-select-option" role="option" tabindex="0" data-value="Other">Other</li>
+          <li class="custom-select-option" role="option" tabindex="0" data-value="Prefer not to say">Prefer not to say</li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="script.js?v=1779521500"></script>
   </body>
 </html>

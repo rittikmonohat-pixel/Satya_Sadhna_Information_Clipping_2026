@@ -408,6 +408,49 @@ coursePopup?.querySelectorAll("[data-close-course]").forEach((el) =>
   el.addEventListener("click", closeCourseList),
 );
 
+// ── Gender popup (same pattern as course popup) ──────────────────────────────
+const applyGenderHidden = document.getElementById("applyGender");
+const genderSelectEl = document.getElementById("applyGenderSelect");
+const genderSelectBtn = genderSelectEl?.querySelector(".custom-select-btn");
+const genderSelectValue = genderSelectEl?.querySelector(".custom-select-value");
+const genderPopup = document.getElementById("genderPopup");
+const genderList = document.getElementById("applyGenderList");
+
+function setApplyGender(value) {
+  if (applyGenderHidden) applyGenderHidden.value = value || "";
+  if (genderSelectValue) {
+    genderSelectValue.textContent = value || "Select…";
+    genderSelectValue.classList.toggle("is-placeholder", !value);
+  }
+}
+function openGenderList() {
+  if (!genderPopup) return;
+  genderPopup.hidden = false;
+  genderPopup.setAttribute("aria-hidden", "false");
+  genderSelectEl?.classList.add("is-open");
+  genderSelectBtn?.setAttribute("aria-expanded", "true");
+}
+function closeGenderList() {
+  if (!genderPopup) return;
+  genderPopup.hidden = true;
+  genderPopup.setAttribute("aria-hidden", "true");
+  genderSelectEl?.classList.remove("is-open");
+  genderSelectBtn?.setAttribute("aria-expanded", "false");
+}
+genderSelectBtn?.addEventListener("click", () => {
+  if (genderPopup?.hidden) openGenderList();
+  else closeGenderList();
+});
+genderList?.addEventListener("click", (e) => {
+  const opt = e.target.closest(".custom-select-option");
+  if (!opt) return;
+  setApplyGender(opt.dataset.value);
+  closeGenderList();
+});
+genderPopup?.querySelectorAll("[data-close-gender]").forEach((el) =>
+  el.addEventListener("click", closeGenderList),
+);
+
 function openApplyModal(e, preselectCourseValue) {
   if (e && typeof e.preventDefault === "function") e.preventDefault();
   if (!applyModal) return;
@@ -423,6 +466,7 @@ function openApplyModal(e, preselectCourseValue) {
   } else {
     setApplyCourse("", "", "");
   }
+  setApplyGender("");
   applyModal.classList.add("is-open");
   applyModal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
@@ -444,6 +488,7 @@ applyModal?.querySelectorAll("[data-close]").forEach((el) =>
 );
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
+  if (genderPopup && !genderPopup.hidden) { closeGenderList(); return; }
   if (coursePopup && !coursePopup.hidden) { closeCourseList(); return; }
   if (applyModal?.classList.contains("is-open")) closeApplyModal();
 });
@@ -451,10 +496,14 @@ document.addEventListener("keydown", (e) => {
 applyForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   if (!applyForm.reportValidity()) return;
+  if (!applyGenderHidden?.value) {
+    genderSelectBtn?.scrollIntoView({ behavior: "smooth", block: "center" });
+    openGenderList();
+    return;
+  }
   if (!applyCourseHidden?.value) {
-    openCourseList();
-    customSelectBtn?.focus();
     customSelectBtn?.scrollIntoView({ behavior: "smooth", block: "center" });
+    openCourseList();
     return;
   }
   const fd = new FormData(applyForm);
