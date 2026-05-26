@@ -388,12 +388,18 @@ function closeCourseList() {
   customSelectBtn?.setAttribute("aria-expanded", "false");
 }
 
-customSelectBtn?.addEventListener("click", () => {
-  if (customSelectList?.hidden) openCourseList();
-  else closeCourseList();
+customSelectBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (customSelectList?.hidden) {
+    populateApplyCourses();
+    openCourseList();
+  } else {
+    closeCourseList();
+  }
 });
 
 customSelectList?.addEventListener("click", (e) => {
+  e.stopPropagation();
   const opt = e.target.closest(".custom-select-option");
   if (!opt || opt.classList.contains("is-disabled")) return;
   setApplyCourse(opt.dataset.value, opt.textContent, opt.dataset.note);
