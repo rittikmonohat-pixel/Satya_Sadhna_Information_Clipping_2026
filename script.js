@@ -309,25 +309,21 @@ document.querySelectorAll(".video-trigger").forEach((trigger) => {
 
 // ── Apply modal ───────────────────────────────────────────────────────────────
 const applyModal = document.getElementById("applyModal");
-const applyCourseSelect = document.getElementById("applyCourse");
+const applyCourseHidden = document.getElementById("applyCourse"); // hidden input for form submission
 const applyNoteBox = document.getElementById("applyNote");
 const applyForm = document.getElementById("applyForm");
-
-function isWithinApplyWindow(dateStr) {
-  const cutoff = courseCutoffUTC(dateStr);
-  if (cutoff == null) return false;
-  const now = Date.now();
-  const eightWeeks = 56 * 24 * 3600 * 1000;
-  return cutoff > now && cutoff <= now + eightWeeks;
-}
+const customSelectEl = document.getElementById("applyCourseSelect");
+const customSelectBtn = customSelectEl?.querySelector(".custom-select-btn");
+const customSelectValue = customSelectEl?.querySelector(".custom-select-value");
+const customSelectList = customSelectEl?.querySelector(".custom-select-list");
+const DEFAULT_COURSE_LABEL = "Select a course…";
 
 function populateApplyCourses() {
-  if (!applyCourseSelect) return;
+  if (!customSelectList) return;
+  customSelectList.innerHTML = "";
   const rows = document.querySelectorAll(".schedule-list .schedule-row");
-  applyCourseSelect.innerHTML = '<option value="">Select a course…</option>';
   let count = 0;
   rows.forEach((row) => {
-    // Only include rows whose status badge marks them open
     if (!row.querySelector(".sr-status.status-open")) return;
     count++;
     const dateText = ((row.querySelector(".sr-date")?.firstChild?.textContent)
@@ -345,33 +341,83 @@ function populateApplyCourses() {
         .trim();
     }
     const loc = (row.querySelector(".sr-loc .loc-badge")?.textContent || "").trim();
-    const opt = document.createElement("option");
-    opt.value = `${dateText} — ${courseName} — ${loc}`;
-    opt.textContent = `${dateText} · ${courseName} · ${loc}`;
-    if (note) opt.dataset.note = note;
-    applyCourseSelect.appendChild(opt);
+    const li = document.createElement("li");
+    li.className = "custom-select-option";
+    li.setAttribute("role", "option");
+    li.tabIndex = 0;
+    li.dataset.value = `${dateText} — ${courseName} — ${loc}`;
+    li.textContent = `${dateText} · ${courseName} · ${loc}`;
+    if (note) li.dataset.note = note;
+    customSelectList.appendChild(li);
   });
   if (count === 0) {
-    applyCourseSelect.innerHTML = '<option value="">No courses currently open for application</option>';
-    applyCourseSelect.disabled = true;
-  } else {
-    applyCourseSelect.disabled = false;
+    const li = document.createElement("li");
+    li.className = "custom-select-option is-disabled";
+    li.textContent = "No courses currently open for application";
+    customSelectList.appendChild(li);
   }
 }
+
+function setApplyCourse(value, label, note) {
+  if (applyCourseHidden) applyCourseHidden.value = value || "";
+  if (customSelectValue) {
+    customSelectValue.textContent = label || DEFAULT_COURSE_LABEL;
+    customSelectValue.classList.toggle("is-placeholder", !value);
+  }
+  if (applyNoteBox) {
+    if (note) {
+      applyNoteBox.textContent = "✦ " + note;
+      applyNoteBox.hidden = false;
+    } else {
+      applyNoteBox.hidden = true;
+      applyNoteBox.textContent = "";
+    }
+  }
+}
+
+function openCourseList() {
+  if (!customSelectList) return;
+  customSelectList.hidden = false;
+  customSelectEl?.classList.add("is-open");
+  customSelectBtn?.setAttribute("aria-expanded", "true");
+}
+function closeCourseList() {
+  if (!customSelectList) return;
+  customSelectList.hidden = true;
+  customSelectEl?.classList.remove("is-open");
+  customSelectBtn?.setAttribute("aria-expanded", "false");
+}
+
+customSelectBtn?.addEventListener("click", () => {
+  if (customSelectList?.hidden) openCourseList();
+  else closeCourseList();
+});
+
+customSelectList?.addEventListener("click", (e) => {
+  const opt = e.target.closest(".custom-select-option");
+  if (!opt || opt.classList.contains("is-disabled")) return;
+  setApplyCourse(opt.dataset.value, opt.textContent, opt.dataset.note);
+  closeCourseList();
+});
+
+document.addEventListener("click", (e) => {
+  if (!customSelectEl?.contains(e.target)) closeCourseList();
+});
 
 function openApplyModal(e, preselectCourseValue) {
   if (e && typeof e.preventDefault === "function") e.preventDefault();
   if (!applyModal) return;
   populateApplyCourses();
-  if (preselectCourseValue && applyCourseSelect) {
-    const match = Array.from(applyCourseSelect.options).find((o) => o.value === preselectCourseValue);
+  if (preselectCourseValue && customSelectList) {
+    const match = Array.from(customSelectList.querySelectorAll(".custom-select-option"))
+      .find((li) => li.dataset.value === preselectCourseValue);
     if (match) {
-      applyCourseSelect.value = preselectCourseValue;
-      applyCourseSelect.dispatchEvent(new Event("change"));
+      setApplyCourse(match.dataset.value, match.textContent, match.dataset.note);
+    } else {
+      setApplyCourse("", "", "");
     }
-  } else if (applyNoteBox) {
-    applyNoteBox.hidden = true;
-    applyNoteBox.textContent = "";
+  } else {
+    setApplyCourse("", "", "");
   }
   applyModal.classList.add("is-open");
   applyModal.setAttribute("aria-hidden", "false");
@@ -383,6 +429,7 @@ function closeApplyModal() {
   applyModal.classList.remove("is-open");
   applyModal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
+  closeCourseList();
 }
 
 document.querySelectorAll(".apply-trigger").forEach((el) =>
@@ -395,22 +442,15 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && applyModal?.classList.contains("is-open")) closeApplyModal();
 });
 
-applyCourseSelect?.addEventListener("change", () => {
-  const opt = applyCourseSelect.options[applyCourseSelect.selectedIndex];
-  const note = opt?.dataset.note || "";
-  if (!applyNoteBox) return;
-  if (note) {
-    applyNoteBox.textContent = "✦ " + note;
-    applyNoteBox.hidden = false;
-  } else {
-    applyNoteBox.hidden = true;
-    applyNoteBox.textContent = "";
-  }
-});
-
 applyForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   if (!applyForm.reportValidity()) return;
+  if (!applyCourseHidden?.value) {
+    openCourseList();
+    customSelectBtn?.focus();
+    customSelectBtn?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
   const fd = new FormData(applyForm);
   const msg =
     `Hello, I'd like to apply for a Satya Sadhna course.\n\n` +
