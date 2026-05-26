@@ -421,7 +421,7 @@ applyForm?.addEventListener("submit", (e) => {
     `Address: *${fd.get("address")}*\n` +
     `Course: *${fd.get("course")}*\n\n` +
     `Please share the next steps. Thank you.`;
-  const url = `https://wa.me/919836488880?text=${encodeURIComponent(msg)}`;
+  const url = `https://wa.me/917980642692?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank", "noopener");
   closeApplyModal();
 });
