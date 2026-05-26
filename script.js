@@ -170,7 +170,36 @@ function filterPastStaticRows() {
     if (isCoursePast(d)) row.remove();
   });
 }
+
+const STATUS_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function decorateScheduleStatus() {
+  document.querySelectorAll(".schedule-list .schedule-row").forEach((row) => {
+    row.querySelector(".sr-status")?.remove();
+    const dateEl = row.querySelector(".sr-date");
+    if (!dateEl) return;
+    // Read only the leading text node so we don't pick up a previously-injected badge
+    const dateText = (dateEl.firstChild?.textContent || dateEl.textContent || "").trim();
+    const cutoff = courseCutoffUTC(dateText);
+    if (cutoff == null) return;
+    const now = Date.now();
+    const eightWeeks = 56 * 24 * 3600 * 1000;
+
+    const badge = document.createElement("span");
+    badge.className = "sr-status";
+    if (cutoff <= now + eightWeeks) {
+      badge.classList.add("status-open");
+      badge.textContent = "Open now";
+    } else {
+      badge.classList.add("status-soon");
+      const opensAt = new Date(cutoff - eightWeeks);
+      badge.textContent = `Opens ${opensAt.getUTCDate()} ${STATUS_MONTHS[opensAt.getUTCMonth()]}`;
+    }
+    dateEl.appendChild(badge);
+  });
+}
+
 filterPastStaticRows();
+decorateScheduleStatus();
 
 function locClass(loc) {
   const l = (loc || "").toLowerCase();
@@ -213,6 +242,7 @@ async function loadSchedule() {
       frag.appendChild(row);
     });
     list.appendChild(frag);
+    decorateScheduleStatus();
   } catch (e) {
     console.warn("Schedule sheet fetch failed, using static fallback:", e);
   }

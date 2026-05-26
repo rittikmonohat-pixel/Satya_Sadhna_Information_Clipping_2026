@@ -2162,3 +2162,22 @@ blockquote {
   box-shadow: 0 8px 22px rgba(37, 211, 102, 0.42);
 }
 .share-app svg { width: 20px; height: 20px; }
+
+/* ── Schedule row: 'Open now' / 'Opens DD MMM' status badge ── */
+.schedule-row .sr-date { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.sr-status {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.sr-status.status-open { background: rgba(34, 139, 87, 0.14); color: #1f7a4d; }
+.sr-status.status-soon { background: rgba(30, 58, 95, 0.08); color: var(--mid-blue); }
+@media (max-width: 900px) {
+  .schedule-row .sr-date { gap: 4px; margin-bottom: 6px; }
+}
